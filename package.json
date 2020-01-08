@@ -1,0 +1,35 @@
+{
+  "name": "eindopracht",
+  "version": "1.0.0",
+  "description": "real time web eindopdracht Jamal van Rooijen",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "start": "nodemon index.js",
+    "watch": "sass --watch assets/scss:public/css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmda-minor-web/real-time-web-1819.git"
+  },
+  "keywords": [
+    "Real",
+    "Time",
+    "Web"
+  ],
+  "author": "Jamal van Rooijen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cmda-minor-web/real-time-web-1819/issues"
+  },
+  "homepage": "https://github.com/cmda-minor-web/real-time-web-1819#readme",
+  "dependencies": {
+    "ejs": "^3.0.1",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.2",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "sass": "^1.24.2"
+  }
+}

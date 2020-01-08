@@ -1,0 +1,5 @@
+.DS_Store
+.DS_Store/*
+opdracht-1/node_modules
+node_modules
+package-lock.json

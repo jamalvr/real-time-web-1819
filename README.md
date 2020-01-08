@@ -1,60 +1,69 @@
-# Real-Time Web @cmda-minor-web · 2018-2019
+# Weather drinking 
+Real-Time Web @cmda-minor-web · 2018-2019
+Author: Jamal van Rooijen
 
-During this course you will learn how to build a **meaningful** real-time application. You will learn techniques to setup an open connection between the client and the server. This will enable you to send data in real-time both ways, at the same time.
+[rubric]: https://docs.google.com/spreadsheets/d/e/2PACX-1vSd1I4ma8R5mtVMyrbp6PA2qEInWiOialK9Fr2orD3afUBqOyvTg_JaQZ6-P4YGURI-eA7PoHT8TRge/pubhtml
 
-## Goals
-- _Deal with real-time complexity_
-- _Handle real-time client-server interaction_
-- _Handle real-time data management_
-- _Handle multi-user support_
+--- 
 
-[Rubric][rubric]
+## Week 1
+### Game steps
+1. Create user with nickname and personal ID
+2. Statemanagement
+   1. Start the game. At this point no new users can join.
+3. Give a random player the option to press the button
+   1. When the button is pressed: Select a random city from an array of cities
+   2. Weather and country is fetched.
+      1. Location is broadcasted to all players.
+      2. Every player has 10 seconds to guess the weather. There are limited options available.
+      3. After 10 seconds, the players with the right answers earn points. If you guessed wrong, you have to drink.
+      4. After 10 turns the game is over and a winner is chosen by the amount of points. The loser has to drink a whole beer.
 
-## Curriculum
+### Data needed
+#### User
+- ID / User name
+- Score
+- Number of players
 
-### Week 1 - Hello Server
+#### Each turn
+- API: City name -> broadcast to players
+- API: Weather current city -> hidden
+- Per player:
+  - If someone answered
+  - Answer speed
+  - Correct / wrong answer
+  - Adding points to right players
+- After 10 seconds OR when everybody gave an answer
+  - Finish turn
+  - Broadcast weather conditions to players
+  - Give points
 
-Goal: Build and deploy a unique barebone real-time app  
+#### Game state
+- If a game is started
+- If a game is finished
+  - If finished, players can enter the roooooom
+- Count turns played until 10 -> finish
 
-[Exercises](https://github.com/cmda-minor-web/real-time-web-1819/blob/master/week-1.md)    
-[Slides](https://docs.google.com/presentation/d/1EVsEFgBnG699nce058ss_PkVJROQXDp5wJJ-IRXvzTA/edit?usp=sharing)  
+### API
+1. Create semi-static base
+2. Define socket.io use cases
+3. Add gameplay
+4. Get weather API
+   1. Poll data every x seconds
 
+### Socket logic
+1. Creating a new user: Socket.io -> connection + disconnect
+2. Register a user + nickname
+3. Button which starts the game -> broadcast/emit to all players
+4. Store data in memory (maybe later to a DB)
 
-### Week 2 - Sharing is caring  
+---
 
-Goal: Store, manipulate and share data between server-client   
-
+## Study info
+### Week 2
 [Exercises](https://github.com/cmda-minor-web/real-time-web-1819/blob/master/week-2.md)    
 [Slides](https://docs.google.com/presentation/d/1woKoY59D8Zcttna0FzfNjEtGtT8oXWi9b5LYlukRISM/edit?usp=sharing)
 
-
-### Week 3 - Let’s take this show on the road 
-
-Goal: Handle data sharing and multi-user support 
-
+### Week 3
 [Exercises](https://github.com/cmda-minor-web/real-time-web-1819/blob/master/week-3.md)  
 [Slides](https://docs.google.com/presentation/d/1SHofRYg87bhdqhv7DQb_HZMbW7Iq1PtqxpdtZHMbMmk/edit?usp=sharing)
-
-> If you're seeing this message on a forked repo, it means one of our students hasn't changed the description yet 😈
-
-<!-- Add a link to your live demo in Github Pages 🌐-->
-
-<!-- ☝️ replace this description with a description of your own work -->
-
-<!-- Add a nice image here at the end of the week, showing off your shiny frontend 📸 -->
-
-<!-- Maybe a table of contents here? 📚 -->
-
-<!-- How about a section that describes how to install this project? 🤓 -->
-
-<!-- ...but how does one use this project? What are its features 🤔 -->
-
-<!-- What external data source is featured in your project and what are its properties 🌠 -->
-
-<!-- This would be a good place for your data life cycle ♻️-->
-
-<!-- Maybe a checklist of done stuff and stuff still on your wishlist? ✅ -->
-
-<!-- How about a license here? 📜 (or is it a licence?) 🤷 -->
-
-[rubric]: https://docs.google.com/spreadsheets/d/e/2PACX-1vSd1I4ma8R5mtVMyrbp6PA2qEInWiOialK9Fr2orD3afUBqOyvTg_JaQZ6-P4YGURI-eA7PoHT8TRge/pubhtml

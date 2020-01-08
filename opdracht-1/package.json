@@ -1,0 +1,25 @@
+{
+  "name": "rtw",
+  "version": "1.0.0",
+  "description": "Real Time Web Jamal",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmda-minor-web/real-time-web-1819.git"
+  },
+  "author": "Jamal van Rooijen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cmda-minor-web/real-time-web-1819/issues"
+  },
+  "homepage": "https://github.com/cmda-minor-web/real-time-web-1819#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.1",
+    "socket.io": "^2.3.0"
+  }
+}
