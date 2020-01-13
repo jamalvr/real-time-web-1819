@@ -8,10 +8,11 @@ Author: Jamal van Rooijen
 
 ## Week 1
 ### Game steps
-1. Create user with nickname and personal ID
-2. Statemanagement
+1. Create initial room for players to join
+2. Create user with nickname and personal ID
+3. Statemanagement
    1. Start the game. At this point no new users can join.
-3. Give a random player the option to press the button
+4. Give a random player the option to press the button
    1. When the button is pressed: Select a random city from an array of cities
    2. Weather and country is fetched.
       1. Location is broadcasted to all players.

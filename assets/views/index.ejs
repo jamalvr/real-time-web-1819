@@ -12,16 +12,20 @@
     </head>
 
     <body>
-        <h1>Test</h1>
+        <h1>Let's goohoo</h1>
 
-        <ul id="messages"></ul>
+        <div class="buttons">
+            <button class="game--create">Create Game</button>
+            <button class="game--join">Join Game</button>
+        </div>
 
-        <form action="">
-            <input id="m" autocomplete="off" /><button>Send</button>
+        <form id="username" class="username">
+            <h3 class="title">Enter name</h3>
+            <input class="username--input" type="text" maxlength="14" />
+            <button type="submit" value="submit" form="username">Enter</button>
         </form>
 
         <script src="/socket.io/socket.io.js"></script>
-        <!-- <script src="https://code.jquery.com/jquery-1.11.1.js"></script> -->
         <script src="js/script.js"></script>
     </body>
 
