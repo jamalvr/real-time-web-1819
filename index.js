@@ -15,13 +15,30 @@ app.get('/', function (req, res) {
     res.render('index.ejs');
 });
 
-////// Room
-const userNumber = 0;
+////// Game
+var userList = [];
 
 io.on('connection', function (socket) {
-    // socket.on('create', function (game) {
-    //     socket.join(game);
-    // });   
+    //// Create game
+    socket.on('createGame', function (game) {
+        socket.join(game);
+    });
+
+    //// Users
+    socket.on('username', function (username, callback) {
+        if (userList.indexOf(username) !== -1) {
+            callback(false);
+        } else {
+            callback(true);
+            console.log(username);
+            userList.push(username);
+            socket.username = username;
+            console.log(userList);
+            socket.emit('userlist', {
+                userList
+            });
+        }
+    });
 });
 
 server.listen(port, function () {

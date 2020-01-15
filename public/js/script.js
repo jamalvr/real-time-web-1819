@@ -3,9 +3,9 @@
     const joinGame = document.querySelector('.game--join');
 
     ////// Helper
-    const stringCleaner = function (string) {
-        let noSpace = string.replace(/\s/g, '');
-        let toLowerCase = noSpace.toLowerCase();
+    const kebabString = function (string) {
+        let kebab = string.replace(/\s/g, '-');
+        let toLowerCase = kebab.toLowerCase();
         return toLowerCase;
     };
 
@@ -15,25 +15,52 @@
         const usernameInput = document.querySelector('.username--input');
 
         usernameForm.addEventListener('submit', function (event) {
+            // Prevent browser refresh
             event.preventDefault();
+
+            // Get clean user input values
             let usernameValue = usernameInput.value;
-            username = stringCleaner(usernameValue);
+            username = kebabString(usernameValue);
 
             // Tell the server your username
-            socket.emit('add user', username);
+            socket.emit('username', username, function (callback) { // Hoe komt data van username nou hier? Dat snap ik niet helemaal
+                if (callback) {
+                    usernameForm.classList.add('hide');
+                    console.log(username);
+                } else {
+                    console.log(username);
+                }
+            });
         })
     };
 
+    socket.on('userlist', function (result) {
+        alert('de userist is aangepast:' + JSON.stringify(result));
+    });
+
     setUsername();
 
-    ////// Create game
-    const createGameButton = document.querySelector('.game--create');
+    ////// Update user list
+    const userList = function () {
+        const listElement = document.getElementById('user--list');
 
-    const sendGame = function () {
-        socket.emit('createGame');
+        forEach(user in userList, function () {
+
+        });
     };
 
-    createGameButton.addEventListener('click', function () {
-        sendGame();
-    });
+    ////// Create game
+    const game = function () {
+        const createGameButton = document.querySelector('.game--create');
+
+        const sendGame = function () {
+            socket.emit('create game');
+        };
+
+        createGameButton.addEventListener('click', function () {
+            sendGame();
+        });
+    };
+
+    game();
 })();
