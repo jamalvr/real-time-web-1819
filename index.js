@@ -5,6 +5,24 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const port = 3000;
 
+//// City globals
+var cities = [
+    'amsterdam',
+    'utrecht',
+    'rotterdam',
+    'kabul',
+    'parus'
+];
+var cityIndex = 0;
+var currentCity = null;
+
+//// Answers
+const answers = [
+    'sunny',
+    'cloudy',
+    'rainy',
+]
+
 ////// Set engine & directories
 app.set('view engine', 'ejs');
 app.set('views', './assets/views/');
@@ -17,6 +35,7 @@ app.get('/', function (req, res) {
 
 ////// Game
 var userList = [];
+var gameRunning = false;
 
 io.on('connection', function (socket) {
     //// Create game
@@ -30,15 +49,28 @@ io.on('connection', function (socket) {
             callback(false);
         } else {
             callback(true);
-            console.log(username);
-            userList.push(username);
             socket.username = username;
-            console.log(userList);
-            socket.emit('userlist', {
-                userList
-            });
+            userList.push(username);
+            io.emit('pushUserList', userList);
         }
     });
+
+    //// Game state biiiiitch
+    socket.on('startGame', function () {
+        // if (gameRunning) {
+        //     return;
+        // }
+        gameRunning = true;
+        console.log(gameRunning);
+        selectCity();
+    });
+
+    //// API
+    selectCity = function () {
+        currentCity = cities[cityIndex];
+        correctAnswer = 'rainy';
+        io.emit('newQuestion', currentCity, answers);
+    }
 });
 
 server.listen(port, function () {

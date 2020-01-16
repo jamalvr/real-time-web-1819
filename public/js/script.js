@@ -1,6 +1,9 @@
 (function () {
     const socket = io();
-    const joinGame = document.querySelector('.game--join');
+
+    // Var = global
+    var userList = [];
+    var username = null;
 
     ////// Helper
     const kebabString = function (string) {
@@ -26,41 +29,42 @@
             socket.emit('username', username, function (callback) { // Hoe komt data van username nou hier? Dat snap ik niet helemaal
                 if (callback) {
                     usernameForm.classList.add('hide');
-                    console.log(username);
+
+                    socket.on('pushUserList', function (data) {
+                        userList = data;
+                        updateUserList();
+                    });
                 } else {
-                    console.log(username);
+                    alert('Al bezet biiiiitch');
                 }
             });
         })
     };
 
-    socket.on('userlist', function (result) {
-        alert('de userist is aangepast:' + JSON.stringify(result));
-    });
-
     setUsername();
 
     ////// Update user list
-    const userList = function () {
+    const updateUserList = function () {
         const listElement = document.getElementById('user--list');
 
-        forEach(user in userList, function () {
-
-        });
+        userList.forEach(function (user) {
+            console.log(user);
+        })
     };
 
     ////// Create game
-    const game = function () {
-        const createGameButton = document.querySelector('.game--create');
-
-        const sendGame = function () {
-            socket.emit('create game');
-        };
+    const startGame = function () {
+        const createGameButton = document.querySelector('.game--start');
 
         createGameButton.addEventListener('click', function () {
-            sendGame();
+            socket.emit('startGame');
         });
     };
 
-    game();
+    socket.on('newQuestion', function (currentCity, answers) {
+        console.log('stad =', currentCity);
+        console.log('antwoorden =', answers);
+    });
+
+    startGame();
 })();
