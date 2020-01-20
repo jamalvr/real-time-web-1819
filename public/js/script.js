@@ -62,8 +62,27 @@
     };
 
     socket.on('newQuestion', function (currentCity, answers) {
-        console.log('stad =', currentCity);
-        console.log('antwoorden =', answers);
+        const showCity = function () {
+            let cityContainer = document.getElementById('current-city');
+            let template = '<h2 class="city-name">' + currentCity + '</h2>';
+            return cityContainer.innerHTML = template;
+        }
+        showCity();
+
+        const showAnswers = function () {
+            let answerList = document.getElementById('current-answers');
+            answerList.innerHTML = '';
+
+            answers.forEach(function (answer) {
+                let template = `
+                <li> 
+                    <button class="answer" value="${answer}">${answer}</button>
+                </li>
+                `;
+                return answerList.innerHTML += template;
+            });
+        }
+        showAnswers();
     });
 
     startGame();

@@ -34,6 +34,16 @@ form button {
   padding: 10px;
 }
 
+button {
+  padding: 20px;
+  font-size: 20px;
+  border-radius: 999px;
+  background-color: blue;
+  color: white;
+  border-width: 4px;
+  border-color: white;
+}
+
 #messages {
   list-style-type: none;
   margin: 0;

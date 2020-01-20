@@ -21,7 +21,7 @@ const answers = [
     'sunny',
     'cloudy',
     'rainy',
-]
+];
 
 ////// Set engine & directories
 app.set('view engine', 'ejs');
