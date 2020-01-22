@@ -1,94 +1,70 @@
-//// Variables ////
-// Font-sizes
-$font-size--tiny: 12px;
-$font-size--small: 14px;
-$font-size--body: 16px;
-$font-size--h1: 40px;
-$font-size--h2: 32px;
-$font-size--h3: 24px;
-$font-size--h4: 20px;
-$font-size--h5: 18px;
-$font-size--h6: 16px;
-
-// Colors
-$color--primary: blue;
-$color--primary__active: navy;
-$color--secondary: orange;
-$color--secondary__active: pumpkin;
-$color--body: black;
-$color--white: white;
-
-// Radius
-$border-radius: 4px;
-$card__border-radius: 10px;
-
-// Shadows
-$box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.2);
-$box-shadow__active: 0px 2px 12px 0px rgba(0, 0, 0, 0.3);
+@use "base/maps" as *;
+@use "base/functions" as *;
 
 //// Styling ////
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    background-color: #000;
-    color: #fff;
-    font-family: sans-serif;
+  background-color: #000;
+  color: #fff;
+  font-family: sans-serif;
+  font-size: const($font-size, body);
 }
 
 h1 {
-    font-size: $font-size--h1;
+  font-size: const($font-size, h1);
 }
 
 form {
-    background: #000;
-    padding: 3px;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
+  background: #000;
+  padding: 3px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
 
-    input {
-        border: 0;
-        padding: 10px;
-        width: 90%;
-        margin-right: .5%;
-    }
+  input {
+    border: 0;
+    padding: 10px;
+    width: 90%;
+    margin-right: 0.5%;
+  }
 
-    button {
-        width: 9%;
-        background: rgb(130, 224, 255);
-        border: none;
-        padding: 10px;
-    }
+  button {
+    width: 9%;
+    background: rgb(130, 224, 255);
+    border: none;
+    padding: 10px;
+  }
 }
 
 button {
-    padding: 20px;
-    font-size: 20px;
-    border-radius: 999px;
-    background-color: $color--primary;
-    color: $color--white;
-    border-width: 4px;
-    border-color: $color--white;
+  padding: 20px;
+  font-size: 20px;
+  border-radius: 999px;
+  background-color: const($color, primary, active);
+  color: const($color, white);
+  border-width: 4px;
+  border-color: const($color, white);
 }
 
 #messages {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 
-    li {
-        padding: 5px 10px;
+  li {
+    padding: 5px 10px;
 
-        &:nth-child(odd) {
-            background: #eee;
-        }
+    &:nth-child(odd) {
+      background: #eee;
     }
+  }
 }
 
 .hide {
-    display: none;
+  display: none;
 }

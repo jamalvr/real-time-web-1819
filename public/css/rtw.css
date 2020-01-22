@@ -8,10 +8,11 @@ body {
   background-color: #000;
   color: #fff;
   font-family: sans-serif;
+  font-size: 16px;
 }
 
 h1 {
-  font-size: 40px;
+  font-size: 32px;
 }
 
 form {
@@ -38,7 +39,7 @@ button {
   padding: 20px;
   font-size: 20px;
   border-radius: 999px;
-  background-color: blue;
+  background-color: red;
   color: white;
   border-width: 4px;
   border-color: white;
