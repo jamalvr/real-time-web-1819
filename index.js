@@ -55,6 +55,8 @@ io.on('connection', function (socket) {
         }
     });
 
+    io.emit('pushUserList', userList);
+
     //// Game state biiiiitch
     socket.on('startGame', function () {
         // if (gameRunning) {

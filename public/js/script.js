@@ -15,7 +15,7 @@
     ////// Sets the client's username
     const setUsername = function () {
         const usernameForm = document.getElementById('username');
-        const usernameInput = document.querySelector('.username--input');
+        const usernameInput = document.querySelector('.username-input');
 
         usernameForm.addEventListener('submit', function (event) {
             // Prevent browser refresh
@@ -30,8 +30,7 @@
                 if (callback) {
                     usernameForm.classList.add('hide');
 
-                    socket.on('pushUserList', function (data) {
-                        userList = data;
+                    socket.on('pushUserList', function (userList) {
                         updateUserList(userList);
                     });
                 } else {
@@ -46,19 +45,25 @@
     ////// Update user list
     const updateUserList = function (userList) {
         const listElement = document.getElementById('user-list');
+        listElement.innerHTML = '';
 
         userList.forEach(function (user) {
-            console.log(user);
-            let template = `
-                <li class="user ${user}">${user}</li>
-                `;
-            return listElement.innerHTML += template;
+            if (userList.indexOf(user) !== -1) {
+                console.log(user);
+                let template = `<li class="user ${user}">${user}</li>`;
+                return listElement.innerHTML += template;
+            }
         })
     };
 
+    /////// Set taken usernames
+    socket.on('pushUserList', function (userList) {
+        updateUserList(userList);
+    });
+
     ////// Create game
     const startGame = function () {
-        const createGameButton = document.querySelector('.game--start');
+        const createGameButton = document.querySelector('.game-start');
 
         createGameButton.addEventListener('click', function () {
             socket.emit('startGame');
@@ -82,11 +87,7 @@
             answerList.innerHTML = '';
 
             answers.forEach(function (answer) {
-                let template = `
-                <li> 
-                    <button class="answer" value="${answer}">${answer}</button>
-                </li>
-                `;
+                let template = `<li><button class="answer" value="${answer}">${answer}</button></li>`;
                 return answerList.innerHTML += template;
             });
 
