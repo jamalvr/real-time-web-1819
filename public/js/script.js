@@ -12,6 +12,16 @@
         return toLowerCase;
     };
 
+    ////// Create game
+    const startGame = function () {
+        const gameButton = document.querySelector('.game-start');
+        gameButton.classList.remove('hide');
+
+        gameButton.addEventListener('click', function () {
+            socket.emit('startGame');
+        });
+    };
+
     ////// Sets the client's username
     const setUsername = function () {
         const usernameForm = document.getElementById('username');
@@ -32,6 +42,10 @@
 
                     socket.on('pushUserList', function (userList) {
                         updateUserList(userList);
+
+                        if (userList.length > 1) {
+                            startGame();
+                        }
                     });
                 } else {
                     alert('Al bezet biiiiitch');
@@ -49,7 +63,6 @@
 
         userList.forEach(function (user) {
             if (userList.indexOf(user) !== -1) {
-                console.log(user);
                 let template = `<li class="user ${user}">${user}</li>`;
                 return listElement.innerHTML += template;
             }
@@ -61,22 +74,11 @@
         updateUserList(userList);
     });
 
-    ////// Create game
-    const startGame = function () {
-        const createGameButton = document.querySelector('.game-start');
-
-        createGameButton.addEventListener('click', function () {
-            socket.emit('startGame');
-        });
-    };
-
-    startGame();
-
     ////// Get question
     socket.on('newQuestion', function (currentCity, answers) {
         const showCity = function () {
             let cityContainer = document.getElementById('current-city');
-            let template = `<h2 class="city-name">${currentCity}</h2>`;
+            let template = `<h2 class="city-name">Wat is het weer in ${currentCity}?</h2>`;
             return cityContainer.innerHTML = template;
         }
 
