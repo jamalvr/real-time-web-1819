@@ -32,7 +32,7 @@
 
                     socket.on('pushUserList', function (data) {
                         userList = data;
-                        updateUserList();
+                        updateUserList(userList);
                     });
                 } else {
                     alert('Al bezet biiiiitch');
@@ -44,11 +44,15 @@
     setUsername();
 
     ////// Update user list
-    const updateUserList = function () {
-        const listElement = document.getElementById('user--list');
+    const updateUserList = function (userList) {
+        const listElement = document.getElementById('user-list');
 
         userList.forEach(function (user) {
             console.log(user);
+            let template = `
+                <li class="user ${user}">${user}</li>
+                `;
+            return listElement.innerHTML += template;
         })
     };
 
@@ -67,7 +71,7 @@
     socket.on('newQuestion', function (currentCity, answers) {
         const showCity = function () {
             let cityContainer = document.getElementById('current-city');
-            let template = '<h2 class="city-name">' + currentCity + '</h2>';
+            let template = `<h2 class="city-name">${currentCity}</h2>`;
             return cityContainer.innerHTML = template;
         }
 
