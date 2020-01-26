@@ -75,6 +75,15 @@ io.on('connection', function (socket) {
         currentCity = cities[cityIndex];
         correctAnswer = 'rainy';
         io.emit('newQuestion', currentCity, answers);
+
+        socket.on('userAnswer', function (userAnswer) {
+            console.log(userAnswer);
+            if (userAnswer === correctAnswer) {
+                console.log('Right Answer');
+            } else {
+                console.log('Wrong Answer');
+            }
+        });
     }
 });
 

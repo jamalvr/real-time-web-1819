@@ -111,7 +111,8 @@
 
             answerButtonArray.forEach(function (button) {
                 button.addEventListener('click', function () {
-                    let answer = button.value;
+                    let userAnswer = button.value;
+                    userAnswer.toString();
                     socket.emit('userAnswer', userAnswer);
                 });
             });
