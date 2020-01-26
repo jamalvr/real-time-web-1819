@@ -1,0 +1,50 @@
+$color: (
+  primary: (
+    base: pink,
+    active: red
+  ),
+  secondary: (
+    base: blue,
+    active: navy
+  ),
+  body: (
+    base: black
+  ),
+  white: (
+    base: white
+  )
+);
+
+$font-size: (
+  body: (
+    base: 16px
+  ),
+  small: (
+    base: 14px
+  ),
+  tiny: (
+    base: 12px
+  ),
+  h1: (
+    base: 32px,
+    tablet: 36px,
+    desktop: 40px
+  ),
+  h2: (
+    base: 32px,
+    tablet: 36px,
+    desktop: 40px
+  ),
+  h3: (
+    base: 24px
+  ),
+  h4: (
+    base: 20px
+  ),
+  h5: (
+    base: 18px
+  ),
+  h6: (
+    base: 16px
+  )
+);

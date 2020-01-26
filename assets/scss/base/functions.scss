@@ -1,0 +1,17 @@
+//// Reading nested maps
+@function map-get-nested($map, $arguments...) {
+  @each $arg in $arguments {
+    @if not map-has-key($map, $arg) {
+      @error 'Unknown constant modifier or state: `#{$arg}`.';
+    } @else {
+      $map: map-get($map, $arg);
+    }
+  }
+
+  @return $map;
+}
+
+//// Using nested maps
+@function const($map, $modifier, $state: base) {
+  @return map-get-nested($map, $modifier, $state);
+}
