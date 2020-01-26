@@ -7,12 +7,12 @@
 
     ////// Helper
     const kebabString = function (string) {
-        let kebab = string.replace(/\s/g, '-');
-        let toLowerCase = kebab.toLowerCase();
+        let kebabify = string.replace(/\s/g, '-');
+        let toLowerCase = kebabify.toLowerCase();
         return toLowerCase;
     };
 
-    ////// Create game
+    ////// Start game button
     const startGame = function () {
         const gameButton = document.querySelector('.game-start');
         gameButton.classList.remove('hide');
@@ -21,6 +21,14 @@
             socket.emit('startGame');
         });
     };
+
+    socket.on('gameState', function (gameRunning) {
+        console.log(gameRunning);
+        if (gameRunning) {
+            const gameButton = document.querySelector('.game-start');
+            gameButton.classList.add('hide');
+        }
+    });
 
     ////// Sets the client's username
     const setUsername = function () {
@@ -43,9 +51,9 @@
                     socket.on('pushUserList', function (userList) {
                         updateUserList(userList);
 
-                        if (userList.length > 1) {
-                            startGame();
-                        }
+                        // if (userList.length > 1) {
+                        startGame();
+                        // }
                     });
                 } else {
                     alert('Al bezet biiiiitch');
@@ -96,12 +104,19 @@
             sendAnswer();
         }
 
+        ////// Send answer
+        const sendAnswer = function () {
+            let answerButtons = document.getElementsByClassName('answer');
+            let answerButtonArray = Array.from(answerButtons);
+
+            answerButtonArray.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    let answer = button.value;
+                    socket.emit('userAnswer', userAnswer);
+                });
+            });
+        };
+
         showAnswers();
     });
-
-    ////// Send answer
-    const sendAnswer = function () {
-        let answerButtons = document.getElementsByClassName('answer');
-        console.log(answerButtons);
-    };
 })();

@@ -5,6 +5,20 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const port = 3000;
 
+////// Set engine & directories
+app.set('view engine', 'ejs');
+app.set('views', './assets/views/');
+app.use(express.static('public'));
+
+////// Views
+app.get('/', function (req, res) {
+    res.render('index.ejs');
+});
+
+////// Game
+var userList = [];
+var gameRunning = false;
+
 //// City globals
 var cities = [
     'amsterdam',
@@ -23,20 +37,6 @@ const answers = [
     'rainy',
 ];
 
-////// Set engine & directories
-app.set('view engine', 'ejs');
-app.set('views', './assets/views/');
-app.use(express.static('public'));
-
-////// Views
-app.get('/', function (req, res) {
-    res.render('index.ejs');
-});
-
-////// Game
-var userList = [];
-var gameRunning = false;
-
 io.on('connection', function (socket) {
     //// Create game
     socket.on('createGame', function (game) {
@@ -50,8 +50,9 @@ io.on('connection', function (socket) {
         } else {
             callback(true);
             socket.username = username;
+            console.log(socket.username);
             userList.push(username);
-            io.emit('pushUserList', userList);
+            io.emit('pushUserList', userList, username);
         }
     });
 
@@ -59,10 +60,12 @@ io.on('connection', function (socket) {
 
     //// Game state biiiiitch
     socket.on('startGame', function () {
-        // if (gameRunning) {
-        //     return;
-        // }
+        if (gameRunning) {
+            io.emit('gameState', gameRunning);
+            return;
+        }
         gameRunning = true;
+        io.emit('gameState', gameRunning);
         console.log(gameRunning);
         selectCity();
     });
