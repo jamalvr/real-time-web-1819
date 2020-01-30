@@ -31,7 +31,7 @@ var cityIndex = 0;
 var currentCity = null;
 
 //// Answers
-const answers = [
+var answers = [
     'sunny',
     'cloudy',
     'rainy',
@@ -62,17 +62,25 @@ io.on('connection', function (socket) {
     socket.on('startGame', function () {
         if (gameRunning) {
             io.emit('gameState', gameRunning);
+            selectCity();
             return;
         }
         gameRunning = true;
         io.emit('gameState', gameRunning);
-        console.log(gameRunning);
         selectCity();
     });
 
     //// API
     selectCity = function () {
-        currentCity = cities[cityIndex];
+        socket.emit('enableCity');
+        socket.on('city', function (city) {
+            currentCity = city;
+            emitQuestion();
+        });
+    }
+
+    emitQuestion = function () {
+        // currentCity = cities[cityIndex];
         correctAnswer = 'rainy';
         io.emit('newQuestion', currentCity, answers);
 

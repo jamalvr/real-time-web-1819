@@ -64,6 +64,30 @@
 
     setUsername();
 
+    ////// Get question
+    socket.on('enableCity', function () {
+        const getCity = function () {
+            const cityForm = document.getElementById('city');
+            const cityInput = document.querySelector('.city-input');
+            cityForm.classList.remove('hide');
+
+            cityForm.addEventListener('submit', function (event) {
+                // Prevent browser refresh
+                event.preventDefault();
+
+                let city = cityInput.value;
+
+                // Do API request from backend here
+                socket.emit('city', city);
+
+                // Hide when done
+                cityForm.classList.add('hide');
+            });
+        };
+
+        getCity();
+    });
+
     ////// Update user list
     const updateUserList = function (userList) {
         const listElement = document.getElementById('user-list');
@@ -120,4 +144,6 @@
 
         showAnswers();
     });
+
+    ////// Send answer
 })();
