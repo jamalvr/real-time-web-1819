@@ -65,7 +65,7 @@
     setUsername();
 
     ////// Get question
-    socket.on('enableCity', function () {
+    socket.on('selectCity', function () {
         const getCity = function () {
             const cityForm = document.getElementById('city');
             const cityInput = document.querySelector('.city-input');
@@ -94,10 +94,12 @@
         listElement.innerHTML = '';
 
         userList.forEach(function (user) {
-            if (userList.indexOf(user) !== -1) {
-                let template = `<li class="user ${user}">${user}</li>`;
-                return listElement.innerHTML += template;
-            }
+            let template = `
+            <li class="user ${user.username}">
+                ${user.username}
+                ${user.score}
+            </li>`;
+            return listElement.innerHTML += template;
         })
     };
 
