@@ -13,5 +13,9 @@
 
 //// Using nested maps
 @function const($map, $modifier, $state: base) {
-  @return map-get-nested($map, $modifier, $state);
+  @if type-of(map-get($map, $modifier)) == "map" {
+    @return map-get-nested($map, $modifier, $state);
+  } @else {
+    @return map-get($map, $modifier);
+  }
 }

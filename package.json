@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "test",
-    "start": "nodemon index.js",
+    "start": "nodemon server.js",
     "watch": "sass --watch assets/scss:public/css"
   },
   "repository": {

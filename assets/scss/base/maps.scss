@@ -7,24 +7,14 @@ $color: (
     base: blue,
     active: navy
   ),
-  body: (
-    base: black
-  ),
-  white: (
-    base: white
-  )
+  body: black,
+  white: white
 );
 
 $font-size: (
-  body: (
-    base: 16px
-  ),
-  small: (
-    base: 14px
-  ),
-  tiny: (
-    base: 12px
-  ),
+  body: 16px,
+  small: 14px,
+  tiny: 12px,
   h1: (
     base: 32px,
     tablet: 36px,
@@ -35,16 +25,8 @@ $font-size: (
     tablet: 36px,
     desktop: 40px
   ),
-  h3: (
-    base: 24px
-  ),
-  h4: (
-    base: 20px
-  ),
-  h5: (
-    base: 18px
-  ),
-  h6: (
-    base: 16px
-  )
+  h3: 24px,
+  h4: 20px,
+  h5: 18px,
+  h6: 16px
 );
