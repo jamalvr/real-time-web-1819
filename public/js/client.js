@@ -116,26 +116,9 @@
                 // let template = `<li><button class="answer" value="${answer}">${answer}</button></li>`;
 
             });
-
-            // sendAnswer();
         }
 
-        ////// Send answer
-        // const sendAnswer = function () {
-        //     let answerButtons = document.getElementsByClassName('answer');
-        //     let answerButtonArray = Array.from(answerButtons);
-
-        //     answerButtonArray.forEach(function (button) {
-        //         button.addEventListener('click', function () {
-        //             let userAnswer = button.value;
-        //             userAnswer.toString();
-        //             console.log('Answering question with:', userAnswer);
-        //             socket.emit('userAnswer', userAnswer);
-        //         });
-        //     });
-        // };
-
-        // showAnswers();
+        showAnswers();
     });
 
     socket.on('gameState', function (gameRunning) {
