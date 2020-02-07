@@ -32,7 +32,9 @@ var answers = [
 ];
 
 io.on('connection', function (socket) {
-    //// Users
+    /////////
+    ///////// Socket listeners
+    /////////
     socket.on('username', function (username, callback) {
         // Todo: Check if username still exists
         // Check if username is already taken
@@ -69,75 +71,76 @@ io.on('connection', function (socket) {
         inputCity();
     });
 
-    //// API
+    // User fills in a city client side
+    socket.on('city', function (city) {
+        // Set currentCity globally for other functions to target
+        currentCity = city;
+        console.log('City is selected by user ' + turn + ' to: ' + city);
+
+        // Send current city & possible answers to client
+        io.emit('newQuestion', currentCity, answers);
+    });
+
+    // Listen if the answer has been given from the client
+    socket.on('userAnswer', function (userAnswer) {
+        emitQuestion(userAnswer);
+    });
+
+    /////////
+    //////// Server functionality
+    /////////
     inputCity = function () {
         // Corresponding user gets to see 'inputCity question'
         console.log('Total user sockets: ', userSockets.length);
         socket.emit('inputCity');
 
         // userSockets[turn] temporarily removed because it broke everything
-
-        // User fills in a city client side
-        socket.on('city', function (city) {
-            // Set currentCity globally for other functions to target
-            currentCity = city;
-            console.log('City is selected by user ' + turn + ' to: ' + city);
-
-            // Enable all players to answer the corresponding question
-            emitQuestion();
-        });
     }
 
     //// Send question to user
-    emitQuestion = function () {
+    emitQuestion = function (userAnswer) {
         // currentCity = cities[cityIndex];
         console.log('question is emitted to users');
         correctAnswer = 'rainy';
 
-        // Send the new question to every user
-        io.emit('newQuestion', currentCity, answers);
+        let id = getUserForSocketId(socket.id);
 
-        // Get the answer PER user
-        socket.on('userAnswer', function (userAnswer) {
-            let id = getUserForSocketId(socket.id);
+        //// Boevencheck haha
+        if (id === null) {
+            console.log('dacht het even niet he boef');
+            return;
+        }
 
-            //// Boevencheck haha
-            if (id === null) {
-                console.log('dacht het even niet he boef');
-                return;
-            }
+        //// Maar 1x antwoord geven
+        if (hasAnswered.includes(id)) {
+            console.log('Hey hey, je mag maar 1x antwoord geven');
+            return;
+        }
 
-            //// Maar 1x antwoord geven
-            if (hasAnswered.includes(id)) {
-                console.log('Hey hey, je mag maar 1x antwoord geven');
-                return;
-            }
+        //// This person has answered, yay!
+        hasAnswered.push(id);
+        console.log('Je antwoord is verwerkt');
 
-            //// This person has answered, yay!
-            hasAnswered.push(id);
-            console.log('Je antwoord is verwerkt');
+        //// Add score to right ID
+        if (userAnswer === correctAnswer) {
+            userList[id].score += 10;
+            io.emit('pushUserList', userList);
+        }
 
-            //// Add score to right ID
-            if (userAnswer === correctAnswer) {
-                userList[id].score += 10;
-                io.emit('pushUserList', userList);
-            }
-
-            // AFTER everyone has answered, select player for next turn
-            // Choose next player for next turn
-            if (userList.length === hasAnswered.length && userList.length < turn) {
-                console.log('userlist length: ' + userList.length + ' & answered length: ' + hasAnswered.length);
-                turn++;
-                console.log('setting turn + 1 and go to inputCity')
-                inputCity();
-            } else {
-                console.log('userlist length: ' + userList.length + ' & answered length: ' + hasAnswered.length);
-            }
-            if (userList.length < turn) {
-                console.log('game over');
-                // turn = 0;
-            }
-        });
+        // AFTER everyone has answered, select player for next turn
+        // Choose next player for next turn
+        if (userList.length === hasAnswered.length && userList.length < turn) {
+            console.log('userlist length: ' + userList.length + ' & answered length: ' + hasAnswered.length);
+            turn++;
+            console.log('setting turn + 1 and go to inputCity')
+            inputCity();
+        } else {
+            console.log('userlist length: ' + userList.length + ' & answered length: ' + hasAnswered.length);
+        }
+        if (userList.length < turn) {
+            console.log('game over');
+            // turn = 0;
+        }
     }
 
     getUserForSocketId = function (id) {

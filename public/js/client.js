@@ -1,18 +1,24 @@
 (function () {
     const socket = io();
 
+    /////////
     ///////// Globals
+    /////////
     var username = null;
     var gameState = false;
 
+    /////////
     ///////// Helper
+    /////////
     const kebabString = function (string) {
         let kebabify = string.replace(/\s/g, '-');
         let toLowerCase = kebabify.toLowerCase();
         return toLowerCase;
     };
 
+    /////////
     //////// Client functionality
+    /////////
     // Start game button
     const startGame = function () {
         const gameButton = document.querySelector('.game-start');
@@ -54,6 +60,8 @@
             });
         })
     };
+
+    setUsername();
 
     // Update user list
     const updateUserList = function (userList) {
@@ -99,6 +107,7 @@
     const showAnswers = function (answers) {
         // Get static parent HTML to place answers in
         let answerList = document.getElementById('current-answers');
+        answerList.innerHTML = '';
 
         answers.forEach(function (answer) {
             // Create nodes
@@ -134,19 +143,12 @@
         return cityContainer.innerHTML = template;
     }
 
-    setUsername();
-
+    /////////
     ///////// Socket listeners
+    /////////
     // When server gets new users, push them to frontend
     socket.on('pushUserList', function (userList) {
         updateUserList(userList);
-    });
-
-    // A (new) question comes in from the server with the chosen city and possible answers
-    socket.on('newQuestion', function (currentCity, answers) {
-        // Show the current city to user
-        showCity(currentCity);
-        showAnswers(answers);
     });
 
     // Set game state to true and hide the start button
@@ -161,5 +163,12 @@
     // Server calls that the user can type a city to their liking
     socket.on('inputCity', function () {
         getCity();
+    });
+
+    // A (new) question comes in from the server with the chosen city and possible answers
+    socket.on('newQuestion', function (currentCity, answers) {
+        // Show the current city to user
+        showCity(currentCity);
+        showAnswers(answers);
     });
 })();
