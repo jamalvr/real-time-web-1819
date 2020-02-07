@@ -88,32 +88,54 @@
 
         const showAnswers = function () {
             let answerList = document.getElementById('current-answers');
-            answerList.innerHTML = '';
+            // answerList.innerHTML = '';
 
             answers.forEach(function (answer) {
-                let template = `<li><button class="answer" value="${answer}">${answer}</button></li>`;
-                return answerList.innerHTML += template;
-            });
+                // Create nodes
+                let listItem = document.createElement('li');
+                let button = document.createElement('button');
+                let text = document.createTextNode(answer);
 
-            sendAnswer();
-        }
+                // Add stuff to node(s)
+                button.value = answer;
+                button.classList.add('answer');
 
-        ////// Send answer
-        const sendAnswer = function () {
-            let answerButtons = document.getElementsByClassName('answer');
-            let answerButtonArray = Array.from(answerButtons);
+                // Append nodes to dom
+                listItem.appendChild(button);
+                button.appendChild(text);
+                answerList.appendChild(listItem);
 
-            answerButtonArray.forEach(function (button) {
+                // Event listeners
                 button.addEventListener('click', function () {
                     let userAnswer = button.value;
                     userAnswer.toString();
                     console.log('Answering question with:', userAnswer);
                     socket.emit('userAnswer', userAnswer);
                 });
-            });
-        };
 
-        showAnswers();
+                // let template = `<li><button class="answer" value="${answer}">${answer}</button></li>`;
+
+            });
+
+            // sendAnswer();
+        }
+
+        ////// Send answer
+        // const sendAnswer = function () {
+        //     let answerButtons = document.getElementsByClassName('answer');
+        //     let answerButtonArray = Array.from(answerButtons);
+
+        //     answerButtonArray.forEach(function (button) {
+        //         button.addEventListener('click', function () {
+        //             let userAnswer = button.value;
+        //             userAnswer.toString();
+        //             console.log('Answering question with:', userAnswer);
+        //             socket.emit('userAnswer', userAnswer);
+        //         });
+        //     });
+        // };
+
+        // showAnswers();
     });
 
     socket.on('gameState', function (gameRunning) {
