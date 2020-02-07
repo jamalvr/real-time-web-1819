@@ -72,10 +72,13 @@ io.on('connection', function (socket) {
     //// API
     inputCity = function () {
         // Corresponding user gets to see 'inputCity question'
-        userSockets[turn].emit('inputCity');
+        console.log('Total user sockets: ', userSockets.length);
+        socket.emit('inputCity');
+
+        // userSockets[turn] temporarily removed because it broke everything
 
         // User fills in a city client side
-        userSockets[turn].on('city', function (city) {
+        socket.on('city', function (city) {
             // Set currentCity globally for other functions to target
             currentCity = city;
             console.log('City is selected by user ' + turn + ' to: ' + city);
@@ -88,13 +91,14 @@ io.on('connection', function (socket) {
     //// Send question to user
     emitQuestion = function () {
         // currentCity = cities[cityIndex];
+        console.log('question is emitted to users');
         correctAnswer = 'rainy';
 
         // Send the new question to every user
         io.emit('newQuestion', currentCity, answers);
 
         // Get the answer PER user
-        io.on('userAnswer', function (userAnswer) {
+        socket.on('userAnswer', function (userAnswer) {
             let id = getUserForSocketId(socket.id);
 
             //// Boevencheck haha
@@ -121,23 +125,17 @@ io.on('connection', function (socket) {
 
             // AFTER everyone has answered, select player for next turn
             // Choose next player for next turn
-            if (userList.length === hasAnswered.length) {
+            if (userList.length === hasAnswered.length && userList.length < turn) {
+                console.log('userlist length: ' + userList.length + ' & answered length: ' + hasAnswered.length);
                 turn++;
-                console.log(userList)
-                console.log(hasAnswered)
-                console.log('userlist length: ' + userList.length)
-                console.log('hasansw length: ' + hasAnswered.length)
                 console.log('setting turn + 1 and go to inputCity')
                 inputCity();
             } else {
-                console.log(userList)
-                console.log(hasAnswered)
-                console.log('userlist length: ' + userList.length)
-                console.log('hasansw length: ' + hasAnswered.length)
+                console.log('userlist length: ' + userList.length + ' & answered length: ' + hasAnswered.length);
             }
-            if (userList.length === turn) {
+            if (userList.length < turn) {
                 console.log('game over');
-                turn = 0;
+                // turn = 0;
             }
         });
     }

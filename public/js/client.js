@@ -107,8 +107,7 @@
                 button.addEventListener('click', function () {
                     let userAnswer = button.value;
                     userAnswer.toString();
-                    console.log('Answering question with:');
-                    console.log(userAnswer);
+                    console.log('Answering question with:', userAnswer);
                     socket.emit('userAnswer', userAnswer);
                 });
             });
@@ -131,7 +130,7 @@
             const cityForm = document.getElementById('city');
             const cityInput = document.querySelector('.city-input');
             cityForm.classList.remove('hide');
-            console.log('removing hide so bbar is shown')
+            console.log('city input is shown')
             cityForm.addEventListener('submit', function (event) {
                 // Prevent browser refresh
                 event.preventDefault();
