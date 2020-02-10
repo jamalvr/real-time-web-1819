@@ -147,8 +147,6 @@ io.on('connection', function (socket) {
             console.log('City input pushed to right user');
             inputCity();
         }
-
-        console.log('The current turn is ' + turn);
     }
 
     getUserForSocketId = function (id) {
