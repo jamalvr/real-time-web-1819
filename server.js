@@ -85,8 +85,8 @@ io.on('connection', function (socket) {
 
     // Listen if the answer has been given from the client
     socket.on('userAnswer', function (userAnswer) {
-        console.log(socket.id + ' | has given answer')
         let id = getUserForSocketId(socket.id);
+        console.log(id + ' | has given answer')
         checkAnswer(userAnswer, id);
     });
 
@@ -126,18 +126,29 @@ io.on('connection', function (socket) {
             io.emit('pushUserList', userList);
         }
 
-        if (userList.length < turn) {
-            console.log('game over');
-            return turn = 0;
-        }
+        turnHandler();
+    }
 
+    turnHandler = function () {
         // AFTER everyone has answered, go to next turn
         if (userList.length === hasAnswered.length) {
             console.log('userlist length: ' + userList.length + ' & answered length: ' + hasAnswered.length);
+            console.log('setting turn + 1');
             turn++;
-            console.log('setting turn + 1 and go to inputCity')
+
+            //// End game when turn is higher than the number of players
+            if (userList.length === turn) {
+                console.log('game over');
+                return turn = 0;
+            }
+
+            console.log('clear array');
+            hasAnswered = [];
+            console.log('City input pushed to right user');
             inputCity();
         }
+
+        console.log('The current turn is ' + turn);
     }
 
     getUserForSocketId = function (id) {
