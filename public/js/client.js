@@ -66,6 +66,8 @@
     // Update user list
     const updateUserList = function (userList) {
         const listElement = document.getElementById('user-list');
+
+        // Clear old html
         listElement.innerHTML = '';
 
         userList.forEach(function (user) {
