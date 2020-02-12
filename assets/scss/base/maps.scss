@@ -7,7 +7,7 @@ $color: (
     base: blue,
     active: navy
   ),
-  body: black,
+  body: #2f3437,
   white: white
 );
 
@@ -15,6 +15,7 @@ $font-size: (
   body: 16px,
   small: 14px,
   tiny: 12px,
+  intro: 20px,
   h1: (
     base: 32px,
     tablet: 36px,
@@ -29,4 +30,26 @@ $font-size: (
   h4: 20px,
   h5: 18px,
   h6: 16px
+);
+
+$spacing: (
+  card: 24px,
+  button: 16px,
+  container: 40px,
+  xs: 4px,
+  s: 8px,
+  m: 16px,
+  l: 24px,
+  xl: 32px,
+  xxl: 40px
+);
+
+$radius: (
+  card: 10px,
+  button: 100px
+);
+
+$shadow: (
+  default: 0px 2px 4px 0px rgba(0, 0, 0, 0.2),
+  hover: 0px 2px 12px 0px rgba(0, 0, 0, 0.32)
 );

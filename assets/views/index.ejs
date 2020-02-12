@@ -12,40 +12,43 @@
     </head>
 
     <body>
-        <h1>Let's goohoo</h1>
+        <div class="game-container">
+            <h1>The weather game 🌤 ⛈ ☀️</h1>
 
-        <div class="user-container">
-            <span id="user-name"></span>
-            <ul id="user-list">
-                <!-- generated content -->
-            </ul>
-        </div>
-
-        <div class="current-question">
-            <div id="current-city">
-
+            <div id="user-container" class="user-container">
+                <ol id="user-list" class="user-list">
+                    <!-- generated content -->
+                </ol>
             </div>
 
-            <ul id="current-answers">
-                <!-- generated content -->
-            </ul>
+            <div class="current-question">
+                <div id="current-city" class="current-city">
+
+                </div>
+
+                <ul id="current-answers" class="current-answers">
+                    <!-- generated content -->
+                </ul>
+            </div>
+
+            <div id="start-button" class="start-button">
+                <button class="game-start hide">Start Game</button>
+            </div>
+
+            <div class="input-container">
+                <form id="username" class="username">
+                    <h3 class="title">Enter name</h3>
+                    <input class="username-input" type="text" maxlength="14" />
+                    <button type="submit" value="submit" form="username">Join</button>
+                </form>
+
+                <form id="city" class="city hide">
+                    <h3 class="title">Enter your favorite city</h3>
+                    <input class="city-input" type="text" maxlength="14" />
+                    <button type="submit" value="submit" form="city">Enter</button>
+                </form>
+            </div>
         </div>
-
-        <div id="start-button" class="start-button">
-            <button class="game-start hide">Start Game</button>
-        </div>
-
-        <form id="username" class="username">
-            <h3 class="title">Enter name</h3>
-            <input class="username-input" type="text" maxlength="14" />
-            <button type="submit" value="submit" form="username">Join</button>
-        </form>
-
-        <form id="city" class="city hide">
-            <h3 class="title">Enter your favorite city</h3>
-            <input class="city-input" type="text" maxlength="14" />
-            <button type="submit" value="submit" form="city">Enter</button>
-        </form>
 
         <script src="/socket.io/socket.io.js"></script>
         <script src="js/client.js"></script>

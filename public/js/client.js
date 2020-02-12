@@ -66,6 +66,7 @@
     // Update user list
     const updateUserList = function (userList) {
         const listElement = document.getElementById('user-list');
+        const listContainer = document.getElementById('user-container');
 
         // Clear old html
         listElement.innerHTML = '';
@@ -73,8 +74,8 @@
         userList.forEach(function (user) {
             let template = `
             <li class="user ${user.username}">
-                ${user.username}
-                ${user.score}
+                <span class="name">${user.username}</span>
+                <span class="score">Score: ${user.score}</span>
             </li>`;
             return listElement.innerHTML += template;
         })
