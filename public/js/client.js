@@ -66,7 +66,6 @@
     // Update user list
     const updateUserList = function (userList) {
         const listElement = document.getElementById('user-list');
-        const listContainer = document.getElementById('user-container');
 
         // Clear old html
         listElement.innerHTML = '';
@@ -78,7 +77,7 @@
                 <span class="score">Score: ${user.score}</span>
             </li>`;
             return listElement.innerHTML += template;
-        })
+        });
     };
 
     // Show city input field and push to server
@@ -106,6 +105,13 @@
             cityForm.classList.add('hide');
         });
     };
+
+    // Template to show the chosen city to user
+    const showCity = function (currentCity) {
+        let cityContainer = document.getElementById('current-city');
+        let template = `<h2 class="city-name">Wat is het weer in ${currentCity}?</h2>`;
+        return cityContainer.innerHTML = template;
+    }
 
     const showAnswers = function (answers) {
         // Get static parent HTML to place answers in
@@ -139,11 +145,36 @@
         });
     }
 
-    // Template to show the chosen city to user
-    const showCity = function (currentCity) {
-        let cityContainer = document.getElementById('current-city');
-        let template = `<h2 class="city-name">Wat is het weer in ${currentCity}?</h2>`;
-        return cityContainer.innerHTML = template;
+    const clearGame = function () {
+
+    }
+
+    const showWinner = function (userList) {
+        let messageContainer = document.getElementById('user-list');
+        let playerScore = 0;
+        let allScores = [];
+
+        // Get user specific score
+        userList.forEach(function (user) {
+            if (user.username === username) {
+                playerScore = user.score;
+            }
+        });
+
+        // map scores
+        userList.map(score = function (user) {
+            let score = user.score
+            return allScores.push(score);
+        });
+
+        // Get highest score
+        let highestScore = Math.max(...allScores);
+
+        if (playerScore === highestScore) {
+            console.log('you win!');
+        } else {
+            console.log('you lose!');
+        }
     }
 
     /////////
@@ -173,5 +204,9 @@
         // Show the current city to user
         showCity(currentCity);
         showAnswers(answers);
+    });
+
+    socket.on('gameOver', function (userScore, userList) {
+        showWinner(userScore, userList);
     });
 })();

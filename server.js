@@ -32,6 +32,76 @@ var answers = [
 ];
 
 io.on('connection', function (socket) {
+    /////////
+    //////// Server functionality
+    /////////
+    inputCity = function () {
+        // Corresponding user gets to see 'inputCity question'
+        userSockets[turn].emit('inputCity');
+    }
+
+    //// Send question to user
+    checkAnswer = function (userAnswer, id) {
+        // currentCity = cities[cityIndex];
+        console.log('question is emitted to users');
+        correctAnswer = 'rainy';
+
+        //// Boevencheck haha
+        if (id === null) {
+            console.log('dacht het even niet he boef');
+            return;
+        }
+
+        //// Maar 1x antwoord geven
+        if (hasAnswered.includes(id)) {
+            console.log('Hey hey, je mag maar 1x antwoord geven');
+            return;
+        }
+
+        //// This person has answered, yay!
+        hasAnswered.push(id);
+        console.log('Je antwoord is verwerkt');
+
+        //// Add score to right ID
+        if (userAnswer === correctAnswer) {
+            userList[id].score += 10;
+            io.emit('pushUserList', userList);
+        }
+
+        console.log('useranswer id = ' + id);
+        turnHandler(id);
+    }
+
+    turnHandler = function (id) {
+        // AFTER everyone has answered, go to next turn
+        if (userList.length === hasAnswered.length) {
+            console.log('userlist length: ' + userList.length + ' & answered length: ' + hasAnswered.length);
+            console.log('setting turn + 1');
+            turn++;
+
+            //// End game when turn is higher than the number of players
+            if (userList.length === turn) {
+                io.emit('gameOver', userList);
+                return turn = 0;
+            }
+
+            console.log('clear array');
+            hasAnswered = [];
+            console.log('City input pushed to right user');
+            inputCity();
+        }
+    }
+
+    getUserForSocketId = function (id) {
+        for (let i = 0; i < userSockets.length; i++) {
+            // If socket.id and id parameter match, give them an ID based on their 'userSocket' array index
+            if (userSockets[i].id === id) {
+                return i;
+            }
+        }
+        return null;
+    }
+
     ///////// Push current users to new client
     io.emit('pushUserList', userList);
 
@@ -89,75 +159,6 @@ io.on('connection', function (socket) {
         console.log(id + ' | has given answer')
         checkAnswer(userAnswer, id);
     });
-
-    /////////
-    //////// Server functionality
-    /////////
-    inputCity = function () {
-        // Corresponding user gets to see 'inputCity question'
-        userSockets[turn].emit('inputCity');
-    }
-
-    //// Send question to user
-    checkAnswer = function (userAnswer, id) {
-        // currentCity = cities[cityIndex];
-        console.log('question is emitted to users');
-        correctAnswer = 'rainy';
-
-        //// Boevencheck haha
-        if (id === null) {
-            console.log('dacht het even niet he boef');
-            return;
-        }
-
-        //// Maar 1x antwoord geven
-        if (hasAnswered.includes(id)) {
-            console.log('Hey hey, je mag maar 1x antwoord geven');
-            return;
-        }
-
-        //// This person has answered, yay!
-        hasAnswered.push(id);
-        console.log('Je antwoord is verwerkt');
-
-        //// Add score to right ID
-        if (userAnswer === correctAnswer) {
-            userList[id].score += 10;
-            io.emit('pushUserList', userList);
-        }
-
-        turnHandler();
-    }
-
-    turnHandler = function () {
-        // AFTER everyone has answered, go to next turn
-        if (userList.length === hasAnswered.length) {
-            console.log('userlist length: ' + userList.length + ' & answered length: ' + hasAnswered.length);
-            console.log('setting turn + 1');
-            turn++;
-
-            //// End game when turn is higher than the number of players
-            if (userList.length === turn) {
-                console.log('game over');
-                return turn = 0;
-            }
-
-            console.log('clear array');
-            hasAnswered = [];
-            console.log('City input pushed to right user');
-            inputCity();
-        }
-    }
-
-    getUserForSocketId = function (id) {
-        for (let i = 0; i < userSockets.length; i++) {
-            // If socket.id and id parameter match, give them an ID based on their 'userSocket' array index
-            if (userSockets[i].id === id) {
-                return i;
-            }
-        }
-        return null;
-    }
 });
 
 server.listen(port, function () {
