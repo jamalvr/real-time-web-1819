@@ -149,8 +149,7 @@
 
     }
 
-    const showWinner = function (userList) {
-        let messageContainer = document.getElementById('user-list');
+    const getAllScores = function (userList) {
         let playerScore = 0;
         let allScores = [];
 
@@ -167,14 +166,25 @@
             return allScores.push(score);
         });
 
+        showWinner(playerScore, allScores);
+    }
+
+    const showWinner = function (playerScore, allScores) {
+        let winnerWinner = document.getElementById('chicken-dinner');
+        let template = null;
+
+        winnerWinner.classList.remove('hide');
+
         // Get highest score
         let highestScore = Math.max(...allScores);
 
         if (playerScore === highestScore) {
-            console.log('you win!');
+            template = `<h1>You win!</h1>`
         } else {
-            console.log('you lose!');
+            template = `<h1>You lose!</h1>`
         }
+
+        winnerWinner.innerHTML = template;
     }
 
     /////////
@@ -207,6 +217,6 @@
     });
 
     socket.on('gameOver', function (userScore, userList) {
-        showWinner(userScore, userList);
+        getAllScores(userScore, userList);
     });
 })();
