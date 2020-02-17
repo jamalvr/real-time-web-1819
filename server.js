@@ -4,6 +4,7 @@ const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const port = 3000;
+const request = require('request');
 
 ////// Set engine & directories
 app.set('view engine', 'ejs');
@@ -31,6 +32,7 @@ var answers = [
     'rainy',
 ];
 
+//// Real time connection
 io.on('connection', function (socket) {
     /////////
     //////// Server functionality
@@ -161,6 +163,24 @@ io.on('connection', function (socket) {
     });
 });
 
+//// API request
+const getCityWeather = function (currentCity) {
+    const apiKey = '3d507ebc96a3b532e2eac8b7e613919f';
+
+    request('http://api.openweathermap.org/data/2.5/weather?q=' + currentCity + '&appid=' + apiKey, {
+        json: true
+    }, async function (err, requestRes, body) {
+        // console.log('async start');
+        if (err) {
+            console.log('error:', err);
+        }
+
+        console.log('body', body);
+        // console.log('requestRes', requestRes);
+    });
+};
+
+//// Check is server running and which port
 server.listen(port, function () {
     console.log('Server listening at port', port);
 });
