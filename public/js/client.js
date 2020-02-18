@@ -110,6 +110,7 @@
     const showCity = function (currentCity) {
         let cityContainer = document.getElementById('current-city');
         let template = `<h2 class="city-name">Wat is het weer in ${currentCity}?</h2>`;
+        
         return cityContainer.innerHTML = template;
     }
 

@@ -151,6 +151,8 @@ io.on('connection', function (socket) {
         currentCity = city;
         console.log(socket.id + ' | ' + turn + ' | ' + 'City is selected by user to: ' + city);
 
+        getCityWeather(currentCity);
+
         // Send current city & possible answers to client
         io.emit('newQuestion', currentCity, answers);
     });
@@ -164,19 +166,28 @@ io.on('connection', function (socket) {
 });
 
 //// API request
-const getCityWeather = function (currentCity) {
+const getCityWeather = function (currentCity, callback) {
     const apiKey = '3d507ebc96a3b532e2eac8b7e613919f';
 
     request('http://api.openweathermap.org/data/2.5/weather?q=' + currentCity + '&appid=' + apiKey, {
         json: true
     }, async function (err, requestRes, body) {
-        // console.log('async start');
+        let responseCode = body.cod;
+        let responseMessage = body.message;
+        let weather = body.weather[0].main;
+        let cityName = body.name;
+
         if (err) {
             console.log('error:', err);
         }
 
-        console.log('body', body);
-        // console.log('requestRes', requestRes);
+        if (responseCode === '404') {
+            console.log(responseMessage);
+            callback = false;
+            return;
+        }
+
+        console.log(cityName, weather);
     });
 };
 
