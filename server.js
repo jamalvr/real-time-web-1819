@@ -29,9 +29,13 @@ var userSockets = [];
 var correctAnswer = null;
 var currentCity = null;
 var answers = [
-    'sunny',
-    'cloudy',
-    'rainy',
+    'Snow',
+    'Clear',
+    'Rain',
+    'Drizzle',
+    'Thunderstorm',
+    'Fog',
+    'Clouds',
 ];
 
 //// Real time connection
