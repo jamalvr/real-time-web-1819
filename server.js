@@ -17,15 +17,17 @@ app.get('/', function (req, res) {
 });
 
 ////// Game
-// todo: zijn userList & userSockets niet dubbel?
-var userList = [];
-var userSockets = [];
 var turn = 0;
 var gameRunning = false;
-var hasAnswered = [];
-var currentCity = null;
 
-//// Answers
+///// Users
+var userList = [];
+var hasAnswered = [];
+var userSockets = [];
+
+//// Questions & Answeres
+var correctAnswer = null;
+var currentCity = null;
 var answers = [
     'sunny',
     'cloudy',
@@ -39,6 +41,7 @@ io.on('connection', function (socket) {
     /////////
     inputCity = function () {
         // Corresponding user gets to see 'inputCity question'
+        console.log('inputcity');
         userSockets[turn].emit('inputCity');
     }
 
@@ -46,7 +49,6 @@ io.on('connection', function (socket) {
     checkAnswer = function (userAnswer, id) {
         // currentCity = cities[cityIndex];
         console.log('question is emitted to users');
-        correctAnswer = 'rainy';
 
         //// Boevencheck haha
         if (id === null) {
@@ -142,19 +144,22 @@ io.on('connection', function (socket) {
         // }
         gameRunning = true;
         io.emit('gameState', gameRunning);
+        console.log('start');
         inputCity();
     });
 
     // User fills in a city client side
-    socket.on('city', function (city) {
+    socket.on('cityValue', function (cityValue, callback) {
         // Set currentCity globally for other functions to target
-        currentCity = city;
-        console.log(socket.id + ' | ' + turn + ' | ' + 'City is selected by user to: ' + city);
+        // currentCity = city;
+        console.log(socket.id + ' | ' + turn + ' | ' + 'City input value: ' + cityValue);
 
-        getCityWeather(currentCity);
+        if (cityValue === '') {
+            return callback(false);
+        }
 
-        // Send current city & possible answers to client
-        io.emit('newQuestion', currentCity, answers);
+        callback(true);
+        getCityWeather(cityValue);
     });
 
     // Listen if the answer has been given from the client
@@ -166,28 +171,25 @@ io.on('connection', function (socket) {
 });
 
 //// API request
-const getCityWeather = function (currentCity, callback) {
-    const apiKey = '3d507ebc96a3b532e2eac8b7e613919f';
+const getCityWeather = function (cityValue) {
+    let apiKey = '3d507ebc96a3b532e2eac8b7e613919f';
 
-    request('http://api.openweathermap.org/data/2.5/weather?q=' + currentCity + '&appid=' + apiKey, {
+    request('http://api.openweathermap.org/data/2.5/weather?q=' + cityValue + '&appid=' + apiKey, {
         json: true
     }, async function (err, requestRes, body) {
+        // Typo or wrong input value handler (specific for this api)
         let responseCode = body.cod;
         let responseMessage = body.message;
-        let weather = body.weather[0].main;
-        let cityName = body.name;
-
-        if (err) {
-            console.log('error:', err);
-        }
-
         if (responseCode === '404') {
             console.log(responseMessage);
-            callback = false;
             return;
         }
 
-        console.log(cityName, weather);
+        let currentWeather = body.weather[0].main;
+        correctAnswer = currentWeather;
+        currentCity = body.name;
+        console.log(body);
+        io.emit('newQuestion', currentCity, answers);
     });
 };
 

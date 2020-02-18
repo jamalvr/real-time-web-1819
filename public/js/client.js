@@ -82,27 +82,29 @@
 
     // Show city input field and push to server
     const getCity = function () {
-        const cityForm = document.getElementById('city');
-        const cityInput = document.querySelector('.city-input');
+        const cityFormElement = document.getElementById('city');
+        const cityValueElement = document.querySelector('.city-input');
 
         // Show input field
-        cityForm.classList.remove('hide');
+        cityFormElement.classList.remove('hide');
         console.log('city input is shown')
 
         // Add submit to communicate to server
-        cityForm.addEventListener('submit', function (event) {
+        cityFormElement.addEventListener('submit', function (event) {
             // Prevent browser refresh
             event.preventDefault();
 
             // Get value from user
-            let city = cityInput.value;
-            console.log('emitting yout city: ' + city);
+            let cityValue = cityValueElement.value;
+            console.log('emitting your city: ' + cityValue);
 
             // Send input value back to the server
-            socket.emit('city', city);
-
-            // Hide when done
-            cityForm.classList.add('hide');
+            socket.emit('cityValue', cityValue, function (callback) {
+                console.log(callback);
+                if (callback) {
+                    cityFormElement.classList.add('hide');
+                }
+            });
         });
     };
 
@@ -110,7 +112,7 @@
     const showCity = function (currentCity) {
         let cityContainer = document.getElementById('current-city');
         let template = `<h2 class="city-name">Wat is het weer in ${currentCity}?</h2>`;
-        
+
         return cityContainer.innerHTML = template;
     }
 
@@ -144,10 +146,6 @@
                 socket.emit('userAnswer', userAnswer);
             });
         });
-    }
-
-    const clearGame = function () {
-
     }
 
     const getAllScores = function (userList) {
