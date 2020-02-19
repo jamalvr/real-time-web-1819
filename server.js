@@ -184,25 +184,30 @@ io.on('connection', function (socket) {
 const getCityWeather = function (cityValue) {
     let apiKey = '3d507ebc96a3b532e2eac8b7e613919f';
 
-    request('http://api.openweathermap.org/data/2.5/weather?q=' + cityValue + '&appid=' + apiKey, {
-        json: true
-    }, async function (err, requestRes, body) {
-        // Typo or wrong input value handler (specific for this api)
-        let responseCode = body.cod;
-        let responseMessage = body.message;
-        if (responseCode === '404') {
-            console.log(responseMessage);
-            return;
-        }
+    return new Promise(function (reject, resolve) {
+        request('http://api.openweathermap.org/data/2.5/weather?q=' + cityValue + '&appid=' + apiKey, {
+            json: true
+        }, async function (err, requestRes, body) {
+            // Typo or wrong input value handler (specific for this api)
+            let responseCode = body.cod;
+            let responseMessage = body.message;
+            if (responseCode === '404') {
+                console.log(responseMessage);
+                reject
+                return;
+            }
 
-        // Set correct answer globally
-        let currentWeather = body.weather[0].main;
-        correctAnswer = currentWeather;
-        currentCity = body.name;
+            // Set correct answer globally
+            let currentWeather = body.weather[0].main;
+            correctAnswer = currentWeather;
+            currentCity = body.name;
 
-        // Emit new question based on request
-        io.emit('newQuestion', currentCity, answers);
-    });
+            // Emit new question based on request
+            io.emit('newQuestion', currentCity, answers);
+
+            resolve(body);
+        });
+    })
 };
 
 //// Check is server running and which port
