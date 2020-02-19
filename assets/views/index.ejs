@@ -13,7 +13,14 @@
 
     <body>
         <div class="game-container">
-            <h1>The weather game 🌤 ⛈ ☀️</h1>
+            <header>
+                <h1>The weather game 🌤 ⛈ ☀️</h1>
+                <button id="show-cheat-sheet">🖕</button>
+            </header>
+
+            <div id="cheat-sheet" class="cheat-sheet">
+
+            </div>
 
             <div id="user-container" class="user-container">
                 <ol id="user-list" class="user-list">
@@ -36,7 +43,7 @@
             </div>
 
             <div class="input-container">
-                <form id="username" class="username">
+                <form id="username" class="username hide">
                     <h3 class="title">Enter name</h3>
                     <input class="username-input" type="text" maxlength="14" />
                     <button type="submit" value="submit" form="username">Join</button>

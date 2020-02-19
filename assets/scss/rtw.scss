@@ -18,11 +18,23 @@ body {
   justify-content: center;
 }
 
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  button {
+    background-color: transparent;
+    padding: const($spacing, s);
+    color: const($color, white);
+  }
+}
+
 h1 {
   font-size: const($font-size, h1, desktop);
 }
 
-h1,
+header,
 h2,
 h3 {
   margin-bottom: const($spacing, m);

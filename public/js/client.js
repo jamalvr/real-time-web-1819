@@ -33,6 +33,7 @@
     const setUsername = function () {
         const usernameForm = document.getElementById('username');
         const usernameInput = document.querySelector('.username-input');
+        usernameForm.classList.remove('hide');
 
         usernameForm.addEventListener('submit', function (event) {
             // Prevent browser refresh
@@ -52,8 +53,6 @@
             });
         })
     };
-
-    setUsername();
 
     // Update user list
     const updateUserList = function (userList) {
@@ -181,6 +180,14 @@
     /////////
     ///////// Socket listeners
     /////////
+    socket.on('checkGameState', function (gameRunning) {
+        // Check if game is already running when a new user/socket joins
+        if (!gameRunning) {
+            // Enable socket to fill in his name
+            setUsername();
+        }
+    });
+
     // When server gets new users, push them to frontend
     socket.on('pushUserList', function (userList) {
         updateUserList(userList);
@@ -206,7 +213,8 @@
     });
 
     // A (new) question comes in from the server with the chosen city and possible answers
-    socket.on('newQuestion', function (currentCity, answers) {
+    socket.on('newQuestion', function (currentCity, answers, correctAnswer) {
+        console.log(correctAnswer);
         // Show the current city to user
         showCity(currentCity);
         showAnswers(answers);

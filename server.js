@@ -29,6 +29,9 @@ var userSockets = [];
 var correctAnswer = null;
 var currentCity = null;
 
+// Interval
+var answerPoller = null;
+
 // There is no known way to get all weather types
 // For know I used the api docks to get all possible answers
 var answers = [
@@ -84,6 +87,11 @@ io.on('connection', function (socket) {
     }
 
     turnHandler = function (id) {
+        // Check if poller is running and cancel
+        if (answerPoller !== null) {
+            clearTimeout(answerPoller);
+        }
+
         // AFTER everyone has answered, go to next turn
         if (userList.length === hasAnswered.length) {
             console.log('userlist length: ' + userList.length + ' & answered length: ' + hasAnswered.length);
@@ -115,6 +123,7 @@ io.on('connection', function (socket) {
 
     ///////// Push current users to new client
     io.emit('pushUserList', userList);
+    io.emit('checkGameState', gameRunning);
 
     /////////
     ///////// Socket listeners
@@ -144,11 +153,6 @@ io.on('connection', function (socket) {
 
     // Game state handler
     socket.on('startGame', function () {
-        // if (gameRunning) {
-        //     io.emit('gameState', gameRunning);
-        //     inputCity();
-        //     return;
-        // }
         gameRunning = true;
 
         // Set game state to true and hide the start button for everyone
@@ -184,30 +188,37 @@ io.on('connection', function (socket) {
 const getCityWeather = function (cityValue) {
     let apiKey = '3d507ebc96a3b532e2eac8b7e613919f';
 
-    return new Promise(function (reject, resolve) {
-        request('http://api.openweathermap.org/data/2.5/weather?q=' + cityValue + '&appid=' + apiKey, {
-            json: true
-        }, async function (err, requestRes, body) {
-            // Typo or wrong input value handler (specific for this api)
-            let responseCode = body.cod;
-            let responseMessage = body.message;
-            if (responseCode === '404') {
-                console.log(responseMessage);
-                reject
-                return;
-            }
+    // return new Promise(function (reject, resolve) {
+    request('http://api.openweathermap.org/data/2.5/weather?q=' + cityValue + '&appid=' + apiKey, {
+        json: true
+    }, async function (err, requestRes, body) {
+        // Typo or wrong input value handler (specific for this api)
+        let responseCode = body.cod;
+        let responseMessage = body.message;
+        if (responseCode === '404') {
+            console.log(responseMessage);
+            // reject
+            return;
+        }
 
-            // Set correct answer globally
-            let currentWeather = body.weather[0].main;
-            correctAnswer = currentWeather;
-            currentCity = body.name;
+        // Set correct answer globally
+        let currentWeather = body.weather[0].main;
+        correctAnswer = currentWeather;
+        currentCity = body.name;
 
-            // Emit new question based on request
-            io.emit('newQuestion', currentCity, answers);
+        console.log(currentWeather);
+        console.log(body);
 
-            resolve(body);
-        });
-    })
+        // Emit new question based on request
+        io.emit('newQuestion', currentCity, answers, correctAnswer);
+
+        // resolve(body);
+        answerPoller = setTimeout(function () {
+            // Callback function to start loop all over again my bro
+            getCityWeather(cityValue);
+        }, 2000);
+    });
+    // });
 };
 
 //// Check is server running and which port
