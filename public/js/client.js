@@ -207,6 +207,11 @@
         }
     });
 
+    socket.on('cityNotFound', function (cityValue) {
+        window.alert('Hey, dude... ' + cityValue + ' bestaat toch helemaal niet man');
+        getCity();
+    });
+
     // Server calls that the user can type a city to their liking
     socket.on('inputCity', function () {
         getCity();

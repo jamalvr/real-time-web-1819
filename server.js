@@ -188,16 +188,15 @@ io.on('connection', function (socket) {
 const getCityWeather = function (cityValue) {
     let apiKey = '3d507ebc96a3b532e2eac8b7e613919f';
 
-    // return new Promise(function (reject, resolve) {
     request('http://api.openweathermap.org/data/2.5/weather?q=' + cityValue + '&appid=' + apiKey, {
         json: true
     }, async function (err, requestRes, body) {
         // Typo or wrong input value handler (specific for this api)
         let responseCode = body.cod;
         let responseMessage = body.message;
+
         if (responseCode === '404') {
-            console.log(responseMessage);
-            // reject
+            userSockets[turn].emit('cityNotFound', cityValue);
             return;
         }
 
@@ -212,13 +211,11 @@ const getCityWeather = function (cityValue) {
         // Emit new question based on request
         io.emit('newQuestion', currentCity, answers, correctAnswer);
 
-        // resolve(body);
+        // Callback function to start loop all over again my bro
         answerPoller = setTimeout(function () {
-            // Callback function to start loop all over again my bro
             getCityWeather(cityValue);
         }, 2000);
     });
-    // });
 };
 
 //// Check is server running and which port
