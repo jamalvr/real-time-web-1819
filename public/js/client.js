@@ -25,12 +25,7 @@
         gameButton.classList.remove('hide');
 
         gameButton.addEventListener('click', function () {
-            socket.emit('startGame', function (gameState) {
-                if (gameState) {
-                    gameButton.classList.add('hide');
-                    gameState = gameState;
-                }
-            });
+            socket.emit('startGame');
         });
     };
 
@@ -48,8 +43,8 @@
             username = kebabString(usernameValue);
 
             // Tell the server your username
-            socket.emit('username', username, function (nameAvailable) { // Hoe komt data van username nou hier? Dat snap ik niet helemaal
-                if (nameAvailable) {
+            socket.emit('username', username, function (callback) { // Hoe komt data van username nou hier? Dat snap ik niet helemaal
+                if (callback) {
                     usernameForm.classList.add('hide');
                 } else {
                     alert('Al bezet biiiiitch');
@@ -96,24 +91,20 @@
             console.log('emitting your city: ' + cityValue);
 
             // Send input value back to the server
-            socket.emit('cityValue', cityValue, function (notEmpty) {
-                // console.log(callback);
-                // if (callback) {
-                //     cityFormElement.classList.add('hide');
-                // }
+            socket.emit('cityValue', cityValue, function (callback) {
+                console.log(callback);
+                if (callback) {
+                    cityFormElement.classList.add('hide');
+                }
             });
         });
     };
 
     // Template to show the chosen city to user
     const showCity = function (currentCity) {
-        // Hide city input
-        let cityFormElement = document.getElementById('city');
-        cityFormElement.classList.add('hide');
-
-        // Show current city
         let cityContainer = document.getElementById('current-city');
         let template = `<h2 class="city-name">Wat is het weer in ${currentCity}?</h2>`;
+
         return cityContainer.innerHTML = template;
     }
 
@@ -178,14 +169,12 @@
         // Get highest score
         let highestScore = Math.max(...allScores);
 
-        // If player score is the highest and higher than 0, player wins.
-        if (playerScore === highestScore && playerScore !== 0) {
+        if (playerScore === highestScore) {
             template = `<h1>You win!</h1>`
         } else {
             template = `<h1>You lose!</h1>`
         }
 
-        // Winner winner chicken dinner
         winnerWinner.innerHTML = template;
     }
 
@@ -199,6 +188,15 @@
         // Enable to start game after 'x' amount of users
         if (userList.length > 0 && !gameState) {
             startGame();
+        }
+    });
+
+    // Set game state to true and hide the start button for everyone
+    socket.on('removeStartButton', function (gameRunning) {
+        if (gameRunning) {
+            gameState = true;
+            const gameButton = document.querySelector('.game-start');
+            gameButton.classList.add('hide');
         }
     });
 
