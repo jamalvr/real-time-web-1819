@@ -28,6 +28,9 @@ var userSockets = [];
 //// Questions & Answeres
 var correctAnswer = null;
 var currentCity = null;
+
+// There is no known way to get all weather types
+// For know I used the api docks to get all possible answers
 var answers = [
     'Snow',
     'Clear',
@@ -117,13 +120,13 @@ io.on('connection', function (socket) {
     ///////// Socket listeners
     /////////
     // fill in username & check if it's already taken
-    socket.on('username', function (username, callback) {
+    socket.on('username', function (username, nameAvailable) {
         // Todo: Check if username still exists
         // Check if username is already taken
         // if (userList.indexOf(username) !== -1) {
-        //     callback(false);
+        //     nameAvailable(false);
         // } else {
-        callback(true);
+        nameAvailable(true);
         socket.username = username;
 
         userList.push({
@@ -140,20 +143,20 @@ io.on('connection', function (socket) {
     });
 
     // Game state handler
-    socket.on('startGame', function () {
+    socket.on('startGame', function (gameState) {
         // if (gameRunning) {
         //     io.emit('gameState', gameRunning);
         //     inputCity();
         //     return;
         // }
+        gameState(true);
         gameRunning = true;
-        io.emit('gameState', gameRunning);
         console.log('start');
         inputCity();
     });
 
     // User fills in a city client side
-    socket.on('cityValue', function (cityValue, callback) {
+    socket.on('cityValue', function (cityValue, notEmpty) {
         // Set currentCity globally for other functions to target
         // currentCity = city;
         console.log(socket.id + ' | ' + turn + ' | ' + 'City input value: ' + cityValue);
@@ -162,7 +165,7 @@ io.on('connection', function (socket) {
             return callback(false);
         }
 
-        callback(true);
+        // notEmpty(true);
         getCityWeather(cityValue);
     });
 
@@ -178,22 +181,32 @@ io.on('connection', function (socket) {
 const getCityWeather = function (cityValue) {
     let apiKey = '3d507ebc96a3b532e2eac8b7e613919f';
 
-    request('http://api.openweathermap.org/data/2.5/weather?q=' + cityValue + '&appid=' + apiKey, {
-        json: true
-    }, async function (err, requestRes, body) {
-        // Typo or wrong input value handler (specific for this api)
-        let responseCode = body.cod;
-        let responseMessage = body.message;
-        if (responseCode === '404') {
-            console.log(responseMessage);
-            return;
-        }
+    return new Promise(function (resolve, reject) {
+        request('http://api.openweathermap.org/data/2.5/weather?q=' + cityValue + '&appid=' + apiKey, {
+            json: true
+        }, async function (err, requestRes, body) {
+            // Typo or wrong input value handler (specific for this api)
+            let responseCode = body.cod;
+            let responseMessage = body.message;
 
-        let currentWeather = body.weather[0].main;
-        correctAnswer = currentWeather;
-        currentCity = body.name;
-        console.log(body);
-        io.emit('newQuestion', currentCity, answers);
+            // Check if city exists
+            if (responseCode === '404') {
+                console.log(responseMessage);
+                reject
+                return;
+            }
+
+            // Change value to correctAnswer global var
+            let currentWeather = body.weather[0].main;
+            correctAnswer = currentWeather;
+
+            // Change current city to name from API call
+            currentCity = body.name;
+            console.log(body);
+            io.emit('newQuestion', currentCity, answers);
+
+            resolve(body);
+        })
     });
 };
 
