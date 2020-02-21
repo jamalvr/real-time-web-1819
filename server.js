@@ -33,7 +33,7 @@ var currentCity = null;
 var answerPoller = null;
 
 // There is no known way to get all weather types
-// For know I used the api docks to get all possible answers
+// For now I used the api docks to wright all possible answers manually
 var answers = [
     'Snow',
     'Clear',
@@ -57,7 +57,6 @@ io.on('connection', function (socket) {
 
     //// Send question to user
     checkAnswer = function (userAnswer, id) {
-        // currentCity = cities[cityIndex];
         console.log('question is emitted to users');
 
         //// Boevencheck haha
@@ -87,7 +86,7 @@ io.on('connection', function (socket) {
     }
 
     turnHandler = function (id) {
-        // Check if poller is running and cancel
+        // Check if poller is running and cancel to enable new poll when needed
         if (answerPoller !== null) {
             clearTimeout(answerPoller);
         }
@@ -104,16 +103,19 @@ io.on('connection', function (socket) {
                 return turn = 0;
             }
 
+            // New turn, no one has answered yet
             console.log('clear array');
             hasAnswered = [];
+
+            // City input is pushed to the right user because of current turn
             console.log('City input pushed to right user');
             inputCity();
         }
     }
 
+    // If socket.id and id parameter match, give them an ID based on their 'userSocket' array index
     getUserForSocketId = function (id) {
         for (let i = 0; i < userSockets.length; i++) {
-            // If socket.id and id parameter match, give them an ID based on their 'userSocket' array index
             if (userSockets[i].id === id) {
                 return i;
             }
@@ -121,6 +123,9 @@ io.on('connection', function (socket) {
         return null;
     }
 
+    /////////
+    ///////// Global emits on connection
+    /////////
     ///////// Push current users to new client
     io.emit('pushUserList', userList);
     io.emit('checkGameState', gameRunning);
@@ -130,11 +135,12 @@ io.on('connection', function (socket) {
     /////////
     // fill in username & check if it's already taken
     socket.on('username', function (username, callback) {
-        // Todo: Check if username still exists
         // Check if username is already taken
-        // if (userList.indexOf(username) !== -1) {
-        //     callback(false);
-        // } else {
+        if (userList.indexOf(username) !== -1) {
+            callback(false);
+            return;
+        }
+
         callback(true);
         socket.username = username;
 
@@ -148,7 +154,6 @@ io.on('connection', function (socket) {
 
         // Add user data to  the complete user list
         io.emit('pushUserList', userList); // Deleted userName because it wasn't necessary anymore 
-        // }
     });
 
     // Game state handler
@@ -191,9 +196,12 @@ const getCityWeather = function (cityValue) {
     request('http://api.openweathermap.org/data/2.5/weather?q=' + cityValue + '&appid=' + apiKey, {
         json: true
     }, async function (err, requestRes, body) {
+        let responseCode = '';
+
         // Typo or wrong input value handler (specific for this api)
-        let responseCode = body.cod;
-        let responseMessage = body.message;
+        if (body) {
+            responseCode = body.cod;
+        }
 
         if (responseCode === '404') {
             userSockets[turn].emit('cityNotFound', cityValue);

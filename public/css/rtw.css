@@ -126,6 +126,15 @@ button {
   justify-content: center;
 }
 
+.cheat-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: pink;
+  padding: 16px;
+}
+
 .hide {
   display: none;
 }

@@ -142,6 +142,16 @@ button {
   justify-content: center;
 }
 
+// menu
+.cheat-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: pink;
+  padding: const($spacing, m);
+}
+
 // Helpers & states
 .hide {
   display: none;
