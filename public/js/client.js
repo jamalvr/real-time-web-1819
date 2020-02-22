@@ -82,29 +82,26 @@ const user = {
 };
 
 const city = {
+    formElement: document.getElementById('city'),
+    valueElement: document.querySelector('.city-input'),
+
     // Show city input field and push to server
-    get: function () {
-        const cityFormElement = document.getElementById('city');
-        const cityValueElement = document.querySelector('.city-input');
-
+    showInput: function () {
         // Show input field
-        cityFormElement.classList.remove('hide');
-        console.log('city input is shown');
+        this.formElement.classList.remove('hide');
+    },
 
+    inputListener: function () {
         // Add submit to communicate to server
-        cityFormElement.addEventListener('submit', function (event) {
+        city.formElement.addEventListener('submit', function (event) {
             // Prevent browser refresh
             event.preventDefault();
-
             // Get value from user
-            let cityValue = cityValueElement.value;
-            console.log('emitting your city: ' + cityValue);
-
+            let cityValue = city.valueElement.value;
             // Send input value back to the server
             socket.emit('cityValue', cityValue, function (callback) {
-                console.log(callback);
                 if (callback) {
-                    cityFormElement.classList.add('hide');
+                    city.formElement.classList.add('hide');
                 };
             });
         });
@@ -209,6 +206,7 @@ const cheatSheet = {
         this.containerElement.innerText = "Right answer is: " + correctAnswer;
     },
 };
+cheatSheet.button();
 
 ///////// Socket listeners
 socket.on('checkGameState', function (gameRunning) {
@@ -240,12 +238,13 @@ socket.on('removeStartButton', function (gameRunning) {
 
 socket.on('cityNotFound', function (cityValue) {
     window.alert('Hey, dude... ' + cityValue + ' bestaat toch helemaal niet man');
-    city.get();
+    city.showInput();
 });
 
 // Server calls that the user can type a city to their liking
 socket.on('inputCity', function () {
-    city.get();
+    city.showInput();
+    city.inputListener();
 });
 
 // A (new) question comes in from the server with the chosen city and possible answers
@@ -261,5 +260,3 @@ socket.on('newQuestion', function (currentCity, answers, correctAnswer) {
 socket.on('gameOver', function (userScore, userList) {
     score.getAll(userScore, userList);
 });
-
-cheatSheet.button();

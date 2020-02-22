@@ -17,7 +17,7 @@ app.get('/', function (req, res) {
 });
 
 ////// Game
-var turn = 0;
+var currentTurn = 0;
 var gameRunning = false;
 
 ///// Users
@@ -46,37 +46,29 @@ var answers = [
 
 //// Real time connection
 io.on('connection', function (socket) {
-    ///////// Global emits on connection
     // Push current users to new client
-    io.emit('pushUserList', userList);
+    socket.emit('pushUserList', userList);
     socket.emit('checkGameState', gameRunning);
 
-    //////// Server functionality
+    // Corresponding user gets to see 'inputCity question'
     inputCity = function () {
-        // Corresponding user gets to see 'inputCity question'
-        console.log('inputcity');
-        userSockets[turn].emit('inputCity');
+        userSockets[currentTurn].emit('inputCity');
     };
 
     //// Send question to user
     checkAnswer = function (userAnswer, id) {
-        console.log('question is emitted to users');
-
         //// Boevencheck haha
         if (id === null) {
-            console.log('dacht het even niet he boef');
             return;
         };
 
         //// Maar 1x antwoord geven
         if (hasAnswered.includes(id)) {
-            console.log('Hey hey, je mag maar 1x antwoord geven');
             return;
         };
 
         //// This person has answered, yay!
         hasAnswered.push(id);
-        console.log('Je antwoord is verwerkt');
 
         //// Add score to right ID
         if (userAnswer === correctAnswer) {
@@ -84,7 +76,6 @@ io.on('connection', function (socket) {
             io.emit('pushUserList', userList);
         };
 
-        console.log('useranswer id = ' + id);
         turnHandler(id);
     };
 
@@ -94,26 +85,20 @@ io.on('connection', function (socket) {
             clearTimeout(answerPoller);
         };
 
-        console.log(userList.length);
-
         // AFTER everyone has answered, go to next turn
         if (userList.length === hasAnswered.length) {
-            console.log('userlist length: ' + userList.length + ' & answered length: ' + hasAnswered.length);
-            console.log('setting turn + 1');
-            turn++;
+            currentTurn++;
 
             //// End game when turn is higher than the number of players
-            if (userList.length === turn) {
+            if (userList.length === currentTurn) {
                 io.emit('gameOver', userList);
-                return turn = 0;
+                return currentTurn = 0;
             };
 
             // New turn, no one has answered yet
-            console.log('clear array');
             hasAnswered = [];
 
             // City input is pushed to the right user because of current turn
-            console.log('City input pushed to right user');
             inputCity();
         };
     };
@@ -139,21 +124,19 @@ io.on('connection', function (socket) {
             }
         };
 
+        // Username is available and will be saved in the username array
         available(true);
         socket.username = username;
-        console.log('username = ' + username);
-
         userList.push({
             username: username,
             score: 0
         });
-        console.log(socket.id);
 
-        // Push all socket data to userSocket array so we can target specific information when we need it
+        // Push all socket data to userSocket array so we can target specific sockets later on
         userSockets.push(socket);
 
-        // Add user data to  the complete user list
-        io.emit('pushUserList', userList); // Deleted userName because it wasn't necessary anymore 
+        // Add complete list with current socket ID's 
+        io.emit('pushUserList', userList);
     });
 
     // Game state handler
@@ -182,7 +165,6 @@ io.on('connection', function (socket) {
     // Listen if the answer has been given from the client
     socket.on('userAnswer', function (userAnswer) {
         let id = getUserForSocketId(socket.id);
-        console.log(id + ' | has given answer')
         checkAnswer(userAnswer, id);
     });
 
@@ -201,7 +183,7 @@ io.on('connection', function (socket) {
             };
 
             if (responseCode === '404') {
-                userSockets[turn].emit('cityNotFound', cityValue);
+                userSockets[currentTurn].emit('cityNotFound', cityValue);
                 return;
             };
 
@@ -209,9 +191,6 @@ io.on('connection', function (socket) {
             let currentWeather = body.weather[0].main;
             correctAnswer = currentWeather;
             currentCity = body.name;
-
-            console.log(currentWeather);
-            console.log(body);
 
             // Emit new question based on request
             io.emit('newQuestion', currentCity, answers, correctAnswer);
