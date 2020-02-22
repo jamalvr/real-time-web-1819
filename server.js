@@ -58,12 +58,7 @@ io.on('connection', function (socket) {
     //// Send question to user
     checkAnswer = function (userAnswer, id) {
         //// Boevencheck haha
-        if (id === null) {
-            return;
-        };
-
-        //// Maar 1x antwoord geven
-        if (hasAnswered.includes(id)) {
+        if (id === null || hasAnswered.includes(id)) {
             return;
         };
 
@@ -166,6 +161,17 @@ io.on('connection', function (socket) {
     socket.on('userAnswer', function (userAnswer) {
         let id = getUserForSocketId(socket.id);
         checkAnswer(userAnswer, id);
+    });
+
+    socket.on('resetGame', function () {
+        currentTurn = 0;
+        gameRunning = false;
+        userList = [];
+        hasAnswered = [];
+        userSockets = [];
+        correctAnswer = null;
+        currentCity = null;
+        answerPoller = null;
     });
 
     //// API request

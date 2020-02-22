@@ -20,16 +20,17 @@ const game = {
     start: function () {
         const gameButton = document.querySelector('.game-start');
         gameButton.classList.remove('hide');
-
         gameButton.addEventListener('click', function () {
-            console.log('start game')
             socket.emit('startGame');
         });
     },
 
-    // reset: function () {
-    //     socket.emit('resetGame');
-    // },
+    reset: function () {
+        const resetButton = document.querySelector('.game-reset');
+        resetButton.addEventListener('click', function () {
+            socket.emit('resetGame');
+        });
+    },
 };
 
 const user = {
@@ -39,10 +40,7 @@ const user = {
         const usernameInput = document.querySelector('.username-input');
         usernameForm.classList.remove('hide');
 
-        // todo: figure out why this event is pushed for every socket that's connected
         usernameForm.addEventListener('submit', function (event) {
-            console.log(event);
-            console.log(socket);
             // Prevent browser refresh
             event.preventDefault();
 
