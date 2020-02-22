@@ -53,7 +53,7 @@ io.on('connection', function (socket) {
         // Corresponding user gets to see 'inputCity question'
         console.log('inputcity');
         userSockets[turn].emit('inputCity');
-    }
+    };
 
     //// Send question to user
     checkAnswer = function (userAnswer, id) {
@@ -63,13 +63,13 @@ io.on('connection', function (socket) {
         if (id === null) {
             console.log('dacht het even niet he boef');
             return;
-        }
+        };
 
         //// Maar 1x antwoord geven
         if (hasAnswered.includes(id)) {
             console.log('Hey hey, je mag maar 1x antwoord geven');
             return;
-        }
+        };
 
         //// This person has answered, yay!
         hasAnswered.push(id);
@@ -79,17 +79,19 @@ io.on('connection', function (socket) {
         if (userAnswer === correctAnswer) {
             userList[id].score += 10;
             io.emit('pushUserList', userList);
-        }
+        };
 
         console.log('useranswer id = ' + id);
         turnHandler(id);
-    }
+    };
 
     turnHandler = function (id) {
         // Check if poller is running and cancel to enable new poll when needed
         if (answerPoller !== null) {
             clearTimeout(answerPoller);
-        }
+        };
+
+        console.log(userList.length);
 
         // AFTER everyone has answered, go to next turn
         if (userList.length === hasAnswered.length) {
@@ -101,7 +103,7 @@ io.on('connection', function (socket) {
             if (userList.length === turn) {
                 io.emit('gameOver', userList);
                 return turn = 0;
-            }
+            };
 
             // New turn, no one has answered yet
             console.log('clear array');
@@ -110,18 +112,18 @@ io.on('connection', function (socket) {
             // City input is pushed to the right user because of current turn
             console.log('City input pushed to right user');
             inputCity();
-        }
-    }
+        };
+    };
 
     // If socket.id and id parameter match, give them an ID based on their 'userSocket' array index
     getUserForSocketId = function (id) {
         for (let i = 0; i < userSockets.length; i++) {
             if (userSockets[i].id === id) {
                 return i;
-            }
-        }
+            };
+        };
         return null;
-    }
+    };
 
     /////////
     ///////// Global emits on connection
@@ -136,18 +138,22 @@ io.on('connection', function (socket) {
     // fill in username & check if it's already taken
     socket.on('username', function (username, callback) {
         // Check if username is already taken
-        if (userList.indexOf(username) !== -1) {
-            callback(false);
-            return;
-        }
+        for (let i = 0; i < userList.length; i++) {
+            if (userList[i].username === username) {
+                callback(false);
+                return;
+            }
+        };
 
         callback(true);
         socket.username = username;
+        console.log('username = ' + username);
 
         userList.push({
             username: username,
             score: 0
         });
+        console.log(socket.id);
 
         // Push all socket data to userSocket array so we can target specific information when we need it
         userSockets.push(socket);
@@ -175,7 +181,7 @@ io.on('connection', function (socket) {
 
         if (cityValue === '') {
             return callback(false);
-        }
+        };
 
         callback(true);
         getCityWeather(cityValue);
@@ -201,12 +207,12 @@ const getCityWeather = function (cityValue) {
         // Typo or wrong input value handler (specific for this api)
         if (body) {
             responseCode = body.cod;
-        }
+        };
 
         if (responseCode === '404') {
             userSockets[turn].emit('cityNotFound', cityValue);
             return;
-        }
+        };
 
         // Set correct answer globally
         let currentWeather = body.weather[0].main;
