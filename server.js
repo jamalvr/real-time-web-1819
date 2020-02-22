@@ -164,6 +164,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('resetGame', function () {
+        // todo: push this to every user
         currentTurn = 0;
         gameRunning = false;
         userList = [];
