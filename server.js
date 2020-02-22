@@ -46,9 +46,12 @@ var answers = [
 
 //// Real time connection
 io.on('connection', function (socket) {
-    /////////
+    ///////// Global emits on connection
+    // Push current users to new client
+    io.emit('pushUserList', userList);
+    socket.emit('checkGameState', gameRunning);
+
     //////// Server functionality
-    /////////
     inputCity = function () {
         // Corresponding user gets to see 'inputCity question'
         console.log('inputcity');
@@ -125,27 +128,18 @@ io.on('connection', function (socket) {
         return null;
     };
 
-    /////////
-    ///////// Global emits on connection
-    /////////
-    ///////// Push current users to new client
-    io.emit('pushUserList', userList);
-    io.emit('checkGameState', gameRunning);
-
-    /////////
     ///////// Socket listeners
-    /////////
     // fill in username & check if it's already taken
-    socket.on('username', function (username, callback) {
+    socket.on('username', function (username, available) {
         // Check if username is already taken
         for (let i = 0; i < userList.length; i++) {
             if (userList[i].username === username) {
-                callback(false);
+                available(false);
                 return;
             }
         };
 
-        callback(true);
+        available(true);
         socket.username = username;
         console.log('username = ' + username);
 
@@ -175,15 +169,13 @@ io.on('connection', function (socket) {
 
     // User fills in a city client side
     socket.on('cityValue', function (cityValue, callback) {
-        // Set currentCity globally for other functions to target
-        // currentCity = city;
-        console.log(socket.id + ' | ' + turn + ' | ' + 'City input value: ' + cityValue);
-
+        // Check if someone actually filled in the form
         if (cityValue === '') {
             return callback(false);
         };
-
         callback(true);
+
+        // If someone answered the form, go to API call
         getCityWeather(cityValue);
     });
 
@@ -193,44 +185,44 @@ io.on('connection', function (socket) {
         console.log(id + ' | has given answer')
         checkAnswer(userAnswer, id);
     });
+
+    //// API request
+    const getCityWeather = function (cityValue) {
+        let apiKey = '3d507ebc96a3b532e2eac8b7e613919f';
+
+        request('http://api.openweathermap.org/data/2.5/weather?q=' + cityValue + '&appid=' + apiKey, {
+            json: true
+        }, async function (err, requestRes, body) {
+            let responseCode = '';
+
+            // Typo or wrong input value handler (specific for this api)
+            if (body) {
+                responseCode = body.cod;
+            };
+
+            if (responseCode === '404') {
+                userSockets[turn].emit('cityNotFound', cityValue);
+                return;
+            };
+
+            // Set correct answer globally
+            let currentWeather = body.weather[0].main;
+            correctAnswer = currentWeather;
+            currentCity = body.name;
+
+            console.log(currentWeather);
+            console.log(body);
+
+            // Emit new question based on request
+            io.emit('newQuestion', currentCity, answers, correctAnswer);
+
+            // Callback function to start loop all over again my bro
+            answerPoller = setTimeout(function () {
+                getCityWeather(cityValue);
+            }, 2000);
+        });
+    };
 });
-
-//// API request
-const getCityWeather = function (cityValue) {
-    let apiKey = '3d507ebc96a3b532e2eac8b7e613919f';
-
-    request('http://api.openweathermap.org/data/2.5/weather?q=' + cityValue + '&appid=' + apiKey, {
-        json: true
-    }, async function (err, requestRes, body) {
-        let responseCode = '';
-
-        // Typo or wrong input value handler (specific for this api)
-        if (body) {
-            responseCode = body.cod;
-        };
-
-        if (responseCode === '404') {
-            userSockets[turn].emit('cityNotFound', cityValue);
-            return;
-        };
-
-        // Set correct answer globally
-        let currentWeather = body.weather[0].main;
-        correctAnswer = currentWeather;
-        currentCity = body.name;
-
-        console.log(currentWeather);
-        console.log(body);
-
-        // Emit new question based on request
-        io.emit('newQuestion', currentCity, answers, correctAnswer);
-
-        // Callback function to start loop all over again my bro
-        answerPoller = setTimeout(function () {
-            getCityWeather(cityValue);
-        }, 2000);
-    });
-};
 
 //// Check is server running and which port
 server.listen(port, function () {

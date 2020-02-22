@@ -1,6 +1,6 @@
 "use strict";
 
-const socket = io();
+var socket = io();
 
 ///////// Globals
 var username = null;
@@ -27,9 +27,9 @@ const game = {
         });
     },
 
-    reset: function () {
-        socket.emit('resetGame');
-    },
+    // reset: function () {
+    //     socket.emit('resetGame');
+    // },
 };
 
 const user = {
@@ -39,8 +39,10 @@ const user = {
         const usernameInput = document.querySelector('.username-input');
         usernameForm.classList.remove('hide');
 
+        // todo: figure out why this event is pushed for every socket that's connected
         usernameForm.addEventListener('submit', function (event) {
             console.log(event);
+            console.log(socket);
             // Prevent browser refresh
             event.preventDefault();
 
@@ -49,13 +51,14 @@ const user = {
             username = helper.kebabString(usernameValue);
 
             // Tell the server your username
-            socket.emit('username', username, function (callback) { // Hoe komt data van username nou hier? Dat snap ik niet helemaal
+            socket.emit('username', username, function (available) { // Hoe komt data van username nou hier? Dat snap ik niet helemaal
                 console.log(username);
-                if (callback) {
+                if (available) {
                     usernameForm.classList.add('hide');
                 } else {
                     alert('Al bezet biiiiitch');
                 }
+                return;
             });
         });
     },
