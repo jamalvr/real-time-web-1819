@@ -8,6 +8,8 @@ Altijd al afgevraagd wat het weer is in welke stad dan ook ter wereld? Daar kan 
 
 Het concept is dat je met je vrienden het weer kan opvragen en daarbij moet raden welk weer het is. Iedereen mag één keer het weer opvragen. Wanneer iedereen aan de beurt is geweest, stopt het spel en is er een winnaar. Het opgevraagde weer wordt real-time bijgehouden en het goede antwoord zal daarmee ook veranderen.
 
+[Link naar demo](https://the-weather-game.herokuapp.com/)
+
 ![data life cycle](assets/screenshot.png)
 
 ## Data life cycle
