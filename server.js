@@ -114,11 +114,13 @@ io.on('connection', function (socket) {
         // Check if username is already taken
         for (let i = 0; i < userList.length; i++) {
             if (userList[i].username === username) {
+                console.log(userList);
                 available(false);
                 return;
             }
         };
 
+        console.log(username + userList);
         // Username is available and will be saved in the username array
         available(true);
         socket.username = username;
@@ -163,16 +165,18 @@ io.on('connection', function (socket) {
         checkAnswer(userAnswer, id);
     });
 
-    socket.on('resetGame', function () {
-        // todo: push this to every user
-        currentTurn = 0;
-        gameRunning = false;
-        userList = [];
+    socket.on('resetServer', function () {
         hasAnswered = [];
         userSockets = [];
         correctAnswer = null;
-        currentCity = null;
         answerPoller = null;
+        userList = [];
+        gameRunning = false;
+        currentCity = null;
+
+        io.emit('pushUserList', userList);
+        io.emit('resetClient', currentCity);
+        io.emit('checkGameState', gameRunning);
     });
 
     //// API request

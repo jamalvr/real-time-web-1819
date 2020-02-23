@@ -26,12 +26,14 @@ const game = {
     },
 
     reset: function () {
-        const resetButton = document.querySelector('.game-reset');
+        const resetButton = document.getElementById('game-reset');
         resetButton.addEventListener('click', function () {
-            socket.emit('resetGame');
+
+            socket.emit('resetServer');
         });
     },
 };
+game.reset();
 
 const user = {
     // Sets the client's username
@@ -54,7 +56,7 @@ const user = {
                 if (available) {
                     usernameForm.classList.add('hide');
                 } else {
-                    alert('Al bezet biiiiitch');
+                    window.alert(username + ' is al bezet hihi 🖕');
                 }
                 return;
             });
@@ -82,6 +84,7 @@ const user = {
 const city = {
     formElement: document.getElementById('city'),
     valueElement: document.querySelector('.city-input'),
+    answerList: document.getElementById('current-answers'),
 
     // Show city input field and push to server
     showInput: function () {
@@ -109,13 +112,14 @@ const city = {
     show: function (currentCity) {
         let cityContainer = document.getElementById('current-city');
         let template = `<h2 class="city-name">Wat is het weer in ${currentCity}?</h2>`;
+        if (currentCity === null) {
+            return cityContainer.innerHTML = '';
+        }
         return cityContainer.innerHTML = template;
     },
 
     showAnswers: function (answers) {
-        // Get static parent HTML to place answers in
-        let answerList = document.getElementById('current-answers');
-        answerList.innerHTML = '';
+        this.clearAnswers();
 
         answers.forEach(function (answer) {
             // Create nodes
@@ -130,7 +134,7 @@ const city = {
             // Append nodes to dom
             listItem.appendChild(button);
             button.appendChild(text);
-            answerList.appendChild(listItem);
+            city.answerList.appendChild(listItem);
 
             // Event listener
             button.addEventListener('click', function () {
@@ -142,6 +146,11 @@ const city = {
                 socket.emit('userAnswer', userAnswer);
             });
         });
+    },
+
+    clearAnswers: function () {
+        // Get static parent HTML to place answers in
+        this.answerList.innerHTML = '';
     },
 };
 
@@ -167,22 +176,24 @@ const score = {
     },
 
     showWinner: function (playerScore, allScores) {
-        let winnerWinner = document.getElementById('chicken-dinner');
-        let template = null;
+        // let winnerWinner = document.getElementById('chicken-dinner');
+        // let template = null;
 
-        winnerWinner.classList.remove('hide');
+        // winnerWinner.classList.remove('hide');
 
         // Get highest score
         let highestScore = Math.max(...allScores);
 
         // If player has highest score and is not zero, wins!
         if (playerScore === highestScore && playerScore !== 0) {
-            template = `<h1>You win!</h1>`
+            // template = `<h1>You win!</h1>`
+            window.alert('You WIN!');
         } else {
-            template = `<h1>You lose!</h1>`
+            // template = `<h1>You lose!</h1>`
+            window.alert('You LOSE!');
         }
 
-        winnerWinner.innerHTML = template;
+        // winnerWinner.innerHTML = template;
     },
 };
 
@@ -215,10 +226,11 @@ socket.on('checkGameState', function (gameRunning) {
     }
 });
 
-// When server gets new users, push them to frontend
-socket.on('pushUserList', function (userList) {
-    user.addToList(userList);
+socket.emit('connect');
 
+// When server gets new users, push them to frontend
+socket.on('pushUserList', function (userList, connectCounter) {
+    user.addToList(userList);
     // Enable to start game after 'x' amount of users
     if (userList.length > 0 && !gameState) {
         game.start();
@@ -257,4 +269,10 @@ socket.on('newQuestion', function (currentCity, answers, correctAnswer) {
 
 socket.on('gameOver', function (userScore, userList) {
     score.getAll(userScore, userList);
+});
+
+socket.on('resetClient', function (currentCity) {
+    username = null;
+    city.show(currentCity);
+    city.clearAnswers();
 });
