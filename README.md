@@ -18,7 +18,7 @@ Het data model is vrij simpel. Het meest interessante wat er gebeurd is dat elke
 --- 
 
 ## API
-Ik maak gebruik van de [Open Weather API](https://openweathermap.org/api). Een simepele weer API waar ik meteen het weer kan ophalen van de stad waar ik naar vraag.
+Ik maak gebruik van de [Open Weather API](https://openweathermap.org/api). Een simpele weer API waar ik meteen het weer kan ophalen van de stad waar ik naar vraag.
 
 ### Authentication
 Je kan je aanmelden met een persoonlijke API key. Deze krijg je automatisch wanneer je een account aanmaakt. Met een gratis account kan je de maximaal `60 requests` per minuut doen.
