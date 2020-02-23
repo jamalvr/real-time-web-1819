@@ -229,7 +229,7 @@ socket.on('checkGameState', function (gameRunning) {
 socket.emit('connect');
 
 // When server gets new users, push them to frontend
-socket.on('pushUserList', function (userList, connectCounter) {
+socket.on('pushUserList', function (userList) {
     user.addToList(userList);
     // Enable to start game after 'x' amount of users
     if (userList.length > 0 && !gameState) {
