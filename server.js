@@ -145,11 +145,13 @@ io.on('connection', function (socket) {
         });
     };
 
-    const cleanData = function (body) {
-        return body = {
-            name: body.name,
-            weather: body.weather[0].main
+    const cleanData = function (data) {
+        data = {
+            name: data.name,
+            weather: data.weather[0].main
         };
+
+        return data;
     };
 
     ///////// Socket listeners
