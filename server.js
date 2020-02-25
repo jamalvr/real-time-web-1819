@@ -71,10 +71,10 @@ io.on('connection', function (socket) {
             io.emit('pushUserList', userList);
         };
 
-        turnHandler(id);
+        turnHandler();
     };
 
-    turnHandler = function (id) {
+    turnHandler = function () {
         // Check if poller is running and cancel to enable new poll when needed
         if (answerPoller !== null) {
             clearTimeout(answerPoller);
@@ -127,10 +127,13 @@ io.on('connection', function (socket) {
                 return;
             };
 
-            // Set correct answer globally
-            let currentWeather = body.weather[0].main;
-            correctAnswer = currentWeather;
-            currentCity = body.name;
+            let data = cleanData(body);
+            correctAnswer = data.weather;
+            currentCity = data.name;
+
+            // console.log(body);
+            // bodyArray = Object.keys(body);
+            console.log(cleanData(body));
 
             // Emit new question based on request
             io.emit('newQuestion', currentCity, answers, correctAnswer);
@@ -140,6 +143,13 @@ io.on('connection', function (socket) {
                 getCityWeather(cityValue);
             }, 2000);
         });
+    };
+
+    const cleanData = function (body) {
+        return body = {
+            name: body.name,
+            weather: body.weather[0].main
+        };
     };
 
     ///////// Socket listeners

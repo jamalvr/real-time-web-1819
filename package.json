@@ -6,7 +6,7 @@
   "scripts": {
     "test": "test",
     "start": "node server.js",
-    "startdev": "nodemon server.js",
+    "start-dev": "nodemon server.js",
     "watch": "sass --watch assets/scss:public/css"
   },
   "repository": {
