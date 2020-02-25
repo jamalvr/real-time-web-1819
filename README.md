@@ -1,6 +1,9 @@
 # The weather game 
-Real-Time Web @cmda-minor-web · 2018-2019
+**Real-Time Web @cmda-minor-web · 2018-2019**
+
 Author: Jamal van Rooijen
+
+---
 
 [rubric]: https://docs.google.com/spreadsheets/d/e/2PACX-1vSd1I4ma8R5mtVMyrbp6PA2qEInWiOialK9Fr2orD3afUBqOyvTg_JaQZ6-P4YGURI-eA7PoHT8TRge/pubhtml
 
@@ -20,10 +23,76 @@ Het data model is vrij simpel. Het meest interessante wat er gebeurd is dat elke
 --- 
 
 ## API
-Ik maak gebruik van de [Open Weather API](https://openweathermap.org/api). Een simpele weer API waar ik meteen het weer kan ophalen van de stad waar ik naar vraag.
+Ik maak gebruik van de [Open Weather API](https://openweathermap.org/api). Een simpele weer API waar ik meteen het weer kan ophalen van de stad waar ik naar vraag. De API zelf haalt elke 10 minuten data op.
 
 ### Authentication
 Je kan je aanmelden met een persoonlijke API key. Deze krijg je automatisch wanneer je een account aanmaakt. Met een gratis account kan je de maximaal `60 requests` per minuut doen.
+
+### Polling
+Het real-time aspect van het spel valt een beetje weg omdat de refresh maar elke 10 minuten is vanuit de API, maar de data wordt voor het idee elke twee seconden opgehaald met een zelfgeschreven polling functie. Wanneer de de API data verandert, verandert dus ook het goede antwoord.
+```javascript
+answerPoller = setTimeout(function () {
+    getCityWeather(cityValue);
+}, 2000);
+```
+
+---
+
+## Clean up data
+De API stuurt vrij simpele data terug, alsnog is het veel meer dan nodig. Om het nog meer to the point te maken heb ik gebruik gemaakt van `object destructuring` om het data object aan te passen en te filteren.
+
+### Standaard data object
+```javascript
+{
+  coord: { lon: 4.89, lat: 52.37 },
+  weather: [
+    { id: 521, main: 'Rain', description: 'shower rain', icon: '09n' }
+  ],
+  base: 'stations',
+  main: {
+    temp: 277.68,
+    feels_like: 274.09,
+    temp_min: 276.48,
+    temp_max: 278.71,
+    pressure: 993,
+    humidity: 80
+  },
+  visibility: 10000,
+  wind: { speed: 2.6, deg: 190 },
+  rain: { '1h': 0.25 },
+  clouds: { all: 40 },
+  dt: 1582663572,
+  sys: {
+    type: 1,
+    id: 1524,
+    country: 'NL',
+    sunrise: 1582612631,
+    sunset: 1582650623
+  },
+  timezone: 3600,
+  id: 2759794,
+  name: 'Amsterdam',
+  cod: 200
+}
+```
+
+### Nieuw data object
+Door het bovenstaande object te hervormen in een nieuw object, krijgt de gebruiker een super simpel data object terug met alles wat de client nodig heeft.
+#### Javascript
+```javascript
+ const cleanData = function (data) {
+        data = {
+            name: data.name,
+            weather: data.weather[0].main
+        };
+
+        return data;
+    };
+```
+#### Output
+```Javascript
+{ name: 'Ewa', weather: 'Clouds' }
+```
 
 ---
 

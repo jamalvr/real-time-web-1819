@@ -131,10 +131,6 @@ io.on('connection', function (socket) {
             correctAnswer = data.weather;
             currentCity = data.name;
 
-            // console.log(body);
-            // bodyArray = Object.keys(body);
-            console.log(cleanData(body));
-
             // Emit new question based on request
             io.emit('newQuestion', currentCity, answers, correctAnswer);
 
